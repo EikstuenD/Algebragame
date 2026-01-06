@@ -1,0 +1,83 @@
+/* Generelt oppsett */
+body {
+    background-color: #111; /* Mørk bakgrunn */
+    color: #0f0; /* Hacker-grønn tekst */
+    font-family: 'Courier New', Courier, monospace; /* Terminal-font */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.game-container {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Terminal-boksen */
+.terminal {
+    border: 2px solid #0f0;
+    background-color: #000;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); /* Glødende effekt */
+    border-radius: 5px;
+}
+
+.highlight {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 5px #0f0;
+}
+
+#math-problem {
+    font-size: 2.5em;
+    margin: 20px 0;
+    letter-spacing: 3px;
+}
+
+/* Input felt og knapp */
+input {
+    background-color: #222;
+    border: 1px solid #0f0;
+    color: #fff;
+    padding: 10px;
+    font-size: 1.2em;
+    width: 150px;
+    text-align: center;
+    font-family: inherit;
+}
+
+button {
+    background-color: #0f0;
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: inherit;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #fff;
+}
+
+/* Feedback (Riktig/Galt) */
+#feedback-message {
+    height: 30px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.correct {
+    color: #0f0;
+}
+
+.wrong {
+    color: #f00; /* Rød */
+}
