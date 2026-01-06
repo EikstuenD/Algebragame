@@ -1,41 +1,52 @@
-let score = 0;
+// Henter lagret score fra nettleseren, eller setter til 0 hvis ny
+let score = parseInt(localStorage.getItem('algebraScore')) || 0;
+updateScoreDisplay();
 
-// --- NAVIGASJON OG MENY ---
-function showMenu() {
-    document.getElementById('menu-screen').classList.remove('hidden');
-    document.getElementById('subtitle').innerText = "Velg oppdrag...";
-    document.getElementById('back-btn').classList.add('hidden');
+// Denne funksjonen kjøres hver gang en side lastes
+document.addEventListener('DOMContentLoaded', () => {
     
-    // Skjul alle spill-skjermer
-    document.getElementById('level-1').classList.add('hidden');
-    document.getElementById('level-2').classList.add('hidden');
-    document.getElementById('level-3').classList.add('hidden');
+    // Sjekker om vi er på Nivå 1
+    if (document.getElementById('game-area-1')) {
+        initLevel1();
+    }
+    
+    // Sjekker om vi er på Nivå 2
+    if (document.getElementById('game-area-2')) {
+        initLevel2();
+    }
+    
+    // Sjekker om vi er på Nivå 3
+    if (document.getElementById('game-area-3')) {
+        initLevel3();
+    }
+});
+
+// Felles funksjon for å oppdatere og lagre score
+function addScore(points) {
+    score += points;
+    localStorage.setItem('algebraScore', score); // Lagrer i nettleseren
+    updateScoreDisplay();
 }
 
-function startLevel(level) {
-    // Skjul meny, vis tilbake-knapp
-    document.getElementById('menu-screen').classList.add('hidden');
-    document.getElementById('back-btn').classList.remove('hidden');
-    document.getElementById('subtitle').innerText = "Nivå " + level;
-
-    // Start riktig spill
-    if(level === 1) initLevel1();
-    if(level === 2) initLevel2();
-    if(level === 3) initLevel3();
+function updateScoreDisplay() {
+    const scoreEl = document.getElementById('total-score');
+    if (scoreEl) scoreEl.innerText = score;
 }
 
-// ==========================================
-// NIVÅ 1 LOGIKK (SUBSTITUSJON)
-// ==========================================
+function resetScore() {
+    score = 0;
+    localStorage.setItem('algebraScore', 0);
+    updateScoreDisplay();
+}
+
+/* ================= NIVÅ 1 LOGIKK ================= */
 let l1_answer = 0;
 
 function initLevel1() {
-    document.getElementById('level-1').classList.remove('hidden');
     document.getElementById('l1-input').value = "";
     document.getElementById('l1-feedback').innerText = "";
     
-    // Generer oppgave: ax + b
-    let x = Math.floor(Math.random() * 5) + 2; // x er mellom 2 og 6
+    let x = Math.floor(Math.random() * 5) + 2; 
     let a = Math.floor(Math.random() * 4) + 2; 
     let b = Math.floor(Math.random() * 10) + 1;
     
@@ -52,47 +63,39 @@ function checkLevel1() {
     if(input === l1_answer) {
         fb.innerText = "Riktig! 🔓";
         fb.style.color = "#0f0";
-        score += 10;
-        updateScore();
+        addScore(10);
         setTimeout(initLevel1, 1500);
     } else {
-        fb.innerText = "Feil kode. Prøv igjen.";
+        fb.innerText = "Feil kode.";
         fb.style.color = "red";
     }
 }
 
-// ==========================================
-// NIVÅ 2 LOGIKK (SORTERING/TREKKE SAMMEN)
-// ==========================================
+/* ================= NIVÅ 2 LOGIKK ================= */
 let l2_ansA = 0;
 let l2_ansB = 0;
 
 function initLevel2() {
-    document.getElementById('level-2').classList.remove('hidden');
     document.getElementById('l2-input-a').value = "";
     document.getElementById('l2-input-b').value = "";
     document.getElementById('l2-feedback').innerText = "";
     
     const conveyor = document.getElementById('l2-conveyor');
-    conveyor.innerHTML = ""; // Tøm båndet
+    conveyor.innerHTML = ""; 
 
     l2_ansA = 0;
     l2_ansB = 0;
 
-    // Generer 4 til 6 ledd (f.eks 2a, b, 3a)
     let numItems = Math.floor(Math.random() * 3) + 4;
     
     for(let i=0; i<numItems; i++) {
         let type = Math.random() > 0.5 ? 'a' : 'b';
-        let val = Math.floor(Math.random() * 4) + 1; // Tall 1-4
+        let val = Math.floor(Math.random() * 4) + 1; 
         
-        // Oppdater fasit
         if(type === 'a') l2_ansA += val;
         else l2_ansB += val;
 
-        // Vis på skjerm (hvis 1a, vis bare a)
         let text = (val === 1) ? type : val + type;
-        
         let div = document.createElement('div');
         div.className = 'item';
         div.innerText = text;
@@ -106,60 +109,37 @@ function checkLevel2() {
     let fb = document.getElementById('l2-feedback');
 
     if(inA === l2_ansA && inB === l2_ansB) {
-        fb.innerText = `Korrekt! Svaret er ${l2_ansA}a + ${l2_ansB}b`;
+        fb.innerText = `Korrekt!`;
         fb.style.color = "#0f0";
-        score += 10;
-        updateScore();
+        addScore(10);
         setTimeout(initLevel2, 2000);
     } else {
-        fb.innerText = "Feil antall. Tell en gang til.";
+        fb.innerText = "Feil antall.";
         fb.style.color = "red";
     }
 }
 
-// ==========================================
-// NIVÅ 3 LOGIKK (BALANSEVEKT - LIGNINGER)
-// ==========================================
-// Ligning: ax + b = c  (Hvor vi sørger for at x er heltall)
-let l3_a = 1; // Antall x-bokser
-let l3_b = 0; // Antall lodd på venstre
-let l3_c = 0; // Antall lodd på høyre
-let l3_xVal = 0; // Verdien av x (skjult for eleven)
+/* ================= NIVÅ 3 LOGIKK ================= */
+let l3_a = 1, l3_b = 0, l3_c = 0, l3_xVal = 0;
 
 function initLevel3() {
-    document.getElementById('level-3').classList.remove('hidden');
     document.getElementById('l3-feedback').innerText = "";
-    
-    // Generer en enkel ligning: 2x + 2 = 8 (f.eks)
-    l3_xVal = Math.floor(Math.random() * 3) + 2; // x er 2, 3 eller 4
-    l3_a = Math.floor(Math.random() * 2) + 2; // 2x eller 3x
-    l3_b = Math.floor(Math.random() * 3) + 1; // 1 til 3 lodd ekstra
-    
-    // Regn ut høyre side
+    l3_xVal = Math.floor(Math.random() * 3) + 2; 
+    l3_a = Math.floor(Math.random() * 2) + 2; 
+    l3_b = Math.floor(Math.random() * 3) + 1; 
     l3_c = (l3_a * l3_xVal) + l3_b;
-
     renderScale();
 }
 
-// Funksjon som tegner boksene og loddene på nytt
 function renderScale() {
     const leftPlate = document.getElementById('scale-left');
     const rightPlate = document.getElementById('scale-right');
     leftPlate.innerHTML = "";
     rightPlate.innerHTML = "";
 
-    // Tegn venstre side (ax + b)
-    for(let i=0; i<l3_a; i++) {
-        leftPlate.innerHTML += `<div class="box-x">x</div>`;
-    }
-    for(let i=0; i<l3_b; i++) {
-        leftPlate.innerHTML += `<div class="weight-1">1</div>`;
-    }
-
-    // Tegn høyre side (c)
-    for(let i=0; i<l3_c; i++) {
-        rightPlate.innerHTML += `<div class="weight-1">1</div>`;
-    }
+    for(let i=0; i<l3_a; i++) leftPlate.innerHTML += `<div class="box-x">x</div>`;
+    for(let i=0; i<l3_b; i++) leftPlate.innerHTML += `<div class="weight-1">1</div>`;
+    for(let i=0; i<l3_c; i++) rightPlate.innerHTML += `<div class="weight-1">1</div>`;
 }
 
 function scaleAction(action) {
@@ -167,40 +147,28 @@ function scaleAction(action) {
     fb.innerText = "";
 
     if(action === 'sub1') {
-        // Ta bort 1 fra begge sider
         if(l3_b > 0 && l3_c > 0) {
-            l3_b--;
-            l3_c--;
+            l3_b--; l3_c--;
             renderScale();
         } else {
-            fb.innerText = "Du kan ikke ta bort lodd hvis det er tomt på den ene siden!";
+            fb.innerText = "Kan ikke fjerne mer!";
             fb.style.color = "orange";
         }
     } else if (action === 'div') {
-        // Del på antall x (hvis loddene er borte)
         if(l3_b === 0) {
             if(l3_c % l3_a === 0) {
-                // Utfør deling visuelt
-                l3_c = l3_c / l3_a;
-                l3_a = 1; // Vi sitter igjen med 1x
+                l3_c = l3_c / l3_a; l3_a = 1;
                 renderScale();
-                
-                // Sjekk om ferdig
-                fb.innerText = `Gratulerer! Du fant ut at x = ${l3_c}`;
+                fb.innerText = `Bra! x = ${l3_c}`;
                 fb.style.color = "#0f0";
-                score += 20;
-                updateScore();
+                addScore(20);
                 setTimeout(initLevel3, 3000);
             } else {
-                fb.innerText = "Det går ikke opp akkurat nå.";
+                fb.innerText = "Går ikke opp.";
             }
         } else {
-            fb.innerText = "Du må fjerne loddene (+b) før du kan dele!";
+            fb.innerText = "Fjern loddene (+b) først!";
             fb.style.color = "orange";
         }
     }
-}
-
-function updateScore() {
-    document.getElementById('total-score').innerText = score;
 }
