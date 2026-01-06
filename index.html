@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operasjon X: Kodeknekkeren</title>
+    <!-- Her kobler vi til CSS-filen for utseende -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="game-container">
+        <header>
+            <h1>OPERASJON X</h1>
+            <p class="subtitle">Sikkerhetsnivå: <span id="level-display">1</span></p>
+        </header>
+
+        <main class="terminal">
+            <div class="info-screen">
+                <p>Oppdrag: Knekk koden for å åpne døren.</p>
+                <div class="variable-box">
+                    <p>Vi vet at: <span id="variable-display" class="highlight">x = ?</span></p>
+                </div>
+                <div class="problem-box">
+                    <p>Finn verdien av:</p>
+                    <h2 id="math-problem">Laster...</h2>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="number" id="player-input" placeholder="Skriv svar..." autocomplete="off">
+                <button id="submit-btn">LÅS OPP</button>
+            </div>
+
+            <p id="feedback-message"></p>
+        </main>
+
+        <footer>
+            <p>Score: <span id="score">0</span> poeng</p>
+        </footer>
+    </div>
+
+    <!-- Her kobler vi til JavaScript-filen for logikken -->
+    <script src="script.js"></script>
+
+</body>
+</html>
