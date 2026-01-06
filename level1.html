@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Nivå 1: Substitusjon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <a href="index.html" class="back-link">← Tilbake til meny</a>
+        
+        <h2>Nivå 1: Kodeknekkeren</h2>
+        
+        <!-- Unik ID for at scriptet skal vite at vi er på nivå 1 -->
+        <div id="game-area-1">
+            <div class="info-box">
+                <p>Vi vet at: <span id="l1-variable" class="highlight">x = ?</span></p>
+                <p>Hva blir da:</p>
+                <h2 id="l1-problem">...</h2>
+            </div>
+            
+            <input type="number" id="l1-input" placeholder="Svar..." autocomplete="off">
+            <button class="action-btn" onclick="checkLevel1()">Sjekk Svar</button>
+            <p id="l1-feedback" class="feedback"></p>
+        </div>
 
+        <footer>
+            <p>Score: <span id="total-score">0</span></p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
