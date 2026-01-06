@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operasjon X: Kodeknekkeren</title>
-    <!-- Her kobler vi til CSS-filen for utseende -->
+    <title>Algebra: Operasjon X</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,36 +11,75 @@
     <div class="game-container">
         <header>
             <h1>OPERASJON X</h1>
-            <p class="subtitle">Sikkerhetsnivå: <span id="level-display">1</span></p>
+            <p id="subtitle">Velg oppdrag...</p>
         </header>
 
-        <main class="terminal">
-            <div class="info-screen">
-                <p>Oppdrag: Knekk koden for å åpne døren.</p>
-                <div class="variable-box">
-                    <p>Vi vet at: <span id="variable-display" class="highlight">x = ?</span></p>
+        <!-- HOVEDMENY -->
+        <div id="menu-screen">
+            <button class="menu-btn" onclick="startLevel(1)">Nivå 1: Kodeknekkeren (Substitusjon)</button>
+            <button class="menu-btn" onclick="startLevel(2)">Nivå 2: Sorterings-roboten (Trekke sammen)</button>
+            <button class="menu-btn" onclick="startLevel(3)">Nivå 3: Balansevekten (Ligninger)</button>
+        </div>
+
+        <!-- NIVÅ 1: SUBSTITUSJON -->
+        <div id="level-1" class="game-screen hidden">
+            <h3>Nivå 1: Hva er koden?</h3>
+            <div class="info-box">
+                <p>Vi vet at: <span id="l1-variable" class="highlight">x = ?</span></p>
+                <p>Regn ut uttrykket:</p>
+                <h2 id="l1-problem">...</h2>
+            </div>
+            <input type="number" id="l1-input" placeholder="Svar..." autocomplete="off">
+            <button class="action-btn" onclick="checkLevel1()">Sjekk Svar</button>
+            <p id="l1-feedback" class="feedback"></p>
+        </div>
+
+        <!-- NIVÅ 2: SORTERING (TREKKE SAMMEN) -->
+        <div id="level-2" class="game-screen hidden">
+            <h3>Nivå 2: Sorterings-roboten</h3>
+            <p>Samlebåndet kommer med deler. Hvor mange <b>a</b> og <b>b</b> har vi totalt?</p>
+            
+            <!-- Her vises "samlebåndet" med a-er og b-er -->
+            <div id="l2-conveyor" class="conveyor-belt"></div>
+
+            <div class="input-group">
+                <label>Antall a: <input type="number" id="l2-input-a"></label>
+                <label>Antall b: <input type="number" id="l2-input-b"></label>
+            </div>
+            <button class="action-btn" onclick="checkLevel2()">Sorter Ferdig</button>
+            <p id="l2-feedback" class="feedback"></p>
+        </div>
+
+        <!-- NIVÅ 3: BALANSEVEKTEN (LIGNINGER) -->
+        <div id="level-3" class="game-screen hidden">
+            <h3>Nivå 3: Balansevekten</h3>
+            <p>Mål: Få <span class="box-icon">x</span> alene på venstre side.</p>
+            
+            <div class="scale-container">
+                <div class="scale-plate" id="scale-left">
+                    <!-- Her tegnes x-bokser og lodd -->
                 </div>
-                <div class="problem-box">
-                    <p>Finn verdien av:</p>
-                    <h2 id="math-problem">Laster...</h2>
+                <div class="scale-center">⚖️</div>
+                <div class="scale-plate" id="scale-right">
+                    <!-- Her tegnes lodd -->
                 </div>
             </div>
 
-            <div class="input-area">
-                <input type="number" id="player-input" placeholder="Skriv svar..." autocomplete="off">
-                <button id="submit-btn">LÅS OPP</button>
+            <div class="controls">
+                <button class="control-btn" onclick="scaleAction('sub1')">-1 kg (begge sider)</button>
+                <button class="control-btn" onclick="scaleAction('div')">Deler på antall x</button>
             </div>
+            <p id="l3-feedback" class="feedback"></p>
+        </div>
 
-            <p id="feedback-message"></p>
-        </main>
-
+        <!-- TILBAKE KNAPP (Vises bare i spill) -->
+        <button id="back-btn" class="hidden" onclick="showMenu()">Tilbake til Meny</button>
+        
         <footer>
-            <p>Score: <span id="score">0</span> poeng</p>
+            <p>Score: <span id="total-score">0</span></p>
         </footer>
     </div>
 
-    <!-- Her kobler vi til JavaScript-filen for logikken -->
     <script src="script.js"></script>
-
 </body>
 </html>
