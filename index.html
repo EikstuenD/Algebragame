@@ -47,11 +47,17 @@
                 <button onclick="move('h', 1)">Fram (+1h)</button>
                 <button onclick="move('h', -1)">Tilbake (-1h)</button>
             </div>
+            <!-- NY: Rulle-knapper -->
+            <div class="control-group">
+                <h3>Rulle (r)</h3>
+                <button onclick="move('r', 1)">Fram (+1r)</button>
+                <button onclick="move('r', -1)">Tilbake (-1r)</button>
+            </div>
         </div>
 
         <button id="solve-btn" class="action-btn" onclick="startSolving()">Jeg er ferdig - Trekk sammen!</button>
 
-        <!-- Svar-seksjon (skjult til man trykker ferdig) -->
+        <!-- Svar-seksjon -->
         <div id="solution-area" class="solution-area hidden">
             <h2>Trekk sammen uttrykket:</h2>
             <p>Hvor mange av hver har du totalt?</p>
@@ -60,6 +66,8 @@
                 <label>Antall s: <input type="number" id="input-s"></label>
                 <label>Antall f: <input type="number" id="input-f"></label>
                 <label>Antall h: <input type="number" id="input-h"></label>
+                <!-- NY: Input for r -->
+                <label>Antall r: <input type="number" id="input-r"></label>
             </div>
 
             <button class="action-btn" onclick="checkAnswer()">Sjekk Svar</button>
