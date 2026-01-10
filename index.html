@@ -14,28 +14,26 @@
             <div class="score-board">Poeng: <span id="score">0</span></div>
         </header>
 
-        <!-- Her vises regnestykket -->
         <div class="math-display">
             <span id="expression">Gjør en bevegelse for å starte...</span>
         </div>
 
-        <!-- Spillområdet med strekmannen -->
         <div class="scene">
             <div class="ground"></div>
-            <!-- Den ytre boksen styrer posisjon (bortover) -->
+            <!-- YTRE BOKS: Posisjon (flytter seg bortover) -->
             <div id="stickman" class="stickman">
-                <!-- Den indre boksen styrer rotasjon og hopping -->
+                <!-- INDRE BOKS: Animasjon (snurrer rundt) -->
                 <div id="stickman-rotator" class="stickman-rotator">
                     <div class="head"></div>
                     <div class="body"></div>
                     <div class="arms"></div>
-                    <!-- Bena tegnes via CSS på rotatoren, men vi beholder strukturen -->
-                    <div class="legs-placeholder"></div>
+                    <!-- Beina er nå egne elementer for å være sikre på at de synes -->
+                    <div class="leg left"></div>
+                    <div class="leg right"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Kontrollpanel for bevegelse -->
         <div id="controls" class="controls">
             <div class="control-group">
                 <h3>Skritt (s)</h3>
@@ -61,18 +59,14 @@
 
         <button id="solve-btn" class="action-btn" onclick="startSolving()">Jeg er ferdig - Trekk sammen!</button>
 
-        <!-- Svar-seksjon -->
         <div id="solution-area" class="solution-area hidden">
             <h2>Trekk sammen uttrykket:</h2>
-            <p>Hvor mange av hver har du totalt?</p>
-            
             <div class="inputs">
                 <label>Antall s: <input type="number" id="input-s"></label>
                 <label>Antall f: <input type="number" id="input-f"></label>
                 <label>Antall h: <input type="number" id="input-h"></label>
                 <label>Antall r: <input type="number" id="input-r"></label>
             </div>
-
             <button class="action-btn" onclick="checkAnswer()">Sjekk Svar</button>
             <p id="feedback"></p>
             <button id="next-round-btn" class="hidden" onclick="resetRound()">Neste runde</button>
