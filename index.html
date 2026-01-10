@@ -11,29 +11,54 @@
     <div class="game-container">
         <header>
             <h1>Algebra-Strekmannen</h1>
-            <div class="score-board">Poeng: <span id="score">0</span></div>
+            <div class="stats">
+                <div class="score-board">💰 Penger: <span id="money">0</span></div>
+                <button class="shop-btn" onclick="toggleShop()">🛒 Butikk</button>
+            </div>
         </header>
+
+        <!-- BUTIKK VINDU (Skjult til vanlig) -->
+        <div id="shop-overlay" class="hidden">
+            <div class="shop-window">
+                <h2>Butikk</h2>
+                <p>Kjøp oppgraderinger for poengene dine!</p>
+                <div class="shop-tabs">
+                    <button onclick="filterShop('bg')">Bakgrunn</button>
+                    <button onclick="filterShop('head')">Hodeplagg</button>
+                    <button onclick="filterShop('body')">Klær</button>
+                </div>
+                <div id="shop-items" class="shop-items">
+                    <!-- Her kommer varene via JavaScript -->
+                </div>
+                <button class="close-shop" onclick="toggleShop()">Lukk butikk</button>
+            </div>
+        </div>
 
         <div class="math-display">
             <span id="expression">Gjør en bevegelse for å starte...</span>
         </div>
 
-        <div class="scene">
+        <!-- Spillområde -->
+        <!-- Vi legger til en id "game-scene" her for å kunne endre bakgrunnen -->
+        <div id="game-scene" class="scene default-bg">
             <div class="ground"></div>
-            <!-- YTRE BOKS: Posisjon (flytter seg bortover) -->
+            
             <div id="stickman" class="stickman">
-                <!-- INDRE BOKS: Animasjon (snurrer rundt) -->
+                <!-- Rotator klassen får klasser for klær (f.eks "shirt-red") -->
                 <div id="stickman-rotator" class="stickman-rotator">
-                    <div class="head"></div>
+                    <div class="head">
+                        <!-- Plass til hatt/briller -->
+                        <div id="accessory" class="accessory"></div>
+                    </div>
                     <div class="body"></div>
                     <div class="arms"></div>
-                    <!-- Beina er nå egne elementer for å være sikre på at de synes -->
                     <div class="leg left"></div>
                     <div class="leg right"></div>
                 </div>
             </div>
         </div>
 
+        <!-- Kontrollpanel -->
         <div id="controls" class="controls">
             <div class="control-group">
                 <h3>Skritt (s)</h3>
@@ -59,6 +84,7 @@
 
         <button id="solve-btn" class="action-btn" onclick="startSolving()">Jeg er ferdig - Trekk sammen!</button>
 
+        <!-- Svar-seksjon -->
         <div id="solution-area" class="solution-area hidden">
             <h2>Trekk sammen uttrykket:</h2>
             <div class="inputs">
