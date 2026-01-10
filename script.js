@@ -1,11 +1,10 @@
 // Variabler for spillet
 let terms = []; 
-// NY: Lagt til r: 0
 let totals = { s: 0, f: 0, h: 0, r: 0 }; 
 let position = 50; 
 let currentScore = 0;
 
-// Timer-variabler
+// Timer-variabler for sammenslåing
 let timerId = null; 
 let erTimerAktiv = false; 
 let forrigeType = null; 
@@ -22,20 +21,22 @@ const scoreDisplay = document.getElementById('score');
 const nextRoundBtn = document.getElementById('next-round-btn');
 
 function move(type, value) {
-    // 1. Oppdater fasiten
+    // 1. Oppdater fasiten i bakgrunnen
     totals[type] += value;
 
     let denneRetning = Math.sign(value); 
 
-    // 2. Samle-logikk
+    // 2. Samle-logikk (Hvis innen 2 sek og samme type)
     if (erTimerAktiv === true && forrigeType === type && forrigeRetning === denneRetning) {
+        // Slå sammen med siste ledd
         let sisteIndex = terms.length - 1;
         terms[sisteIndex].val += value;
     } else {
+        // Lag nytt ledd
         terms.push({ type: type, val: value });
     }
 
-    // 3. Reset timer
+    // 3. Reset og start timer på nytt
     if (timerId) clearTimeout(timerId);
     
     erTimerAktiv = true;
@@ -45,9 +46,9 @@ function move(type, value) {
     timerId = setTimeout(function() {
         erTimerAktiv = false;
         forrigeType = null;
-    }, 2000);
+    }, 2000); // 2 sekunder
 
-    // 4. Oppdater GUI
+    // 4. Oppdater skjerm og animasjon
     updateExpressionDisplay();
     updateVisuals(type, value);
 }
@@ -81,36 +82,40 @@ function updateExpressionDisplay() {
 function updateVisuals(type, value) {
     let moveAmount = 0;
     
-    // Bestem hvor langt den skal gå
+    // Bestem hvor langt den skal flytte seg
     if (type === 's') moveAmount = 5;
     if (type === 'f') moveAmount = 2;
     if (type === 'h') moveAmount = 10;
-    if (type === 'r') moveAmount = 8; // Rulle går litt lenger enn skritt
+    if (type === 'r') moveAmount = 8; 
 
     if (value < 0) moveAmount *= -1;
 
     position += moveAmount;
     
+    // Begrens posisjon (holder seg innenfor 5% - 95%)
     if (position > 95) position = 95;
     if (position < 5) position = 5;
 
+    // Flytt den YTRE boksen (posisjon)
     stickman.style.left = position + "%";
 
     // --- ANIMASJONER ---
+    // Vi animerer den INDRE boksen (rotator)
+    const rotator = document.getElementById('stickman-rotator');
     
-    // Fjern gamle animasjoner først for å kunne trigge på nytt
-    stickman.classList.remove('jump-anim', 'roll-anim');
+    // Fjern gamle animasjonsklasser
+    rotator.classList.remove('jump-anim', 'roll-anim');
     
-    // Tving nettleseren til å oppdage at klassen er fjernet (reflow)
-    void stickman.offsetWidth;
+    // Magisk triks: Trigger "reflow" slik at animasjonen kan starte på nytt med en gang
+    void rotator.offsetWidth;
 
+    // Legg til animasjon basert på type
     if (type === 'h') {
-        stickman.classList.add('jump-anim');
+        rotator.classList.add('jump-anim');
     }
     
-    // NY: Trigge rulle-animasjon
     if (type === 'r') {
-        stickman.classList.add('roll-anim');
+        rotator.classList.add('roll-anim');
     }
 }
 
@@ -120,6 +125,7 @@ function startSolving() {
         return;
     }
     
+    // Stopp timer så ikke tallene slår seg sammen mens vi svarer
     clearTimeout(timerId);
     erTimerAktiv = false;
 
@@ -127,11 +133,11 @@ function startSolving() {
     solveBtn.classList.add('hidden');
     solutionArea.classList.remove('hidden');
     
-    // Tøm input-feltene
+    // Tøm felter
     document.getElementById('input-s').value = '';
     document.getElementById('input-f').value = '';
     document.getElementById('input-h').value = '';
-    document.getElementById('input-r').value = ''; // Tøm r-feltet
+    document.getElementById('input-r').value = '';
     feedbackText.innerText = '';
 }
 
@@ -139,9 +145,9 @@ function checkAnswer() {
     let userS = parseInt(document.getElementById('input-s').value) || 0;
     let userF = parseInt(document.getElementById('input-f').value) || 0;
     let userH = parseInt(document.getElementById('input-h').value) || 0;
-    let userR = parseInt(document.getElementById('input-r').value) || 0; // Hent r-svar
+    let userR = parseInt(document.getElementById('input-r').value) || 0;
 
-    // NY: Sjekk at r også stemmer
+    // Sjekk om alt stemmer
     if (userS === totals.s && userF === totals.f && userH === totals.h && userR === totals.r) {
         let points = calculatePoints();
         currentScore += points;
@@ -157,12 +163,13 @@ function checkAnswer() {
 }
 
 function calculatePoints() {
+    // 10 poeng per ledd i uttrykket
     return terms.length * 10;
 }
 
 function resetRound() {
     terms = [];
-    totals = { s: 0, f: 0, h: 0, r: 0 }; // Nullstill r også
+    totals = { s: 0, f: 0, h: 0, r: 0 }; 
     position = 50;
     
     clearTimeout(timerId);
@@ -172,8 +179,9 @@ function resetRound() {
     expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
     stickman.style.left = "50%";
     
-    // Fjern animasjonsklasser ved reset
-    stickman.classList.remove('jump-anim', 'roll-anim');
+    // Reset animasjoner
+    const rotator = document.getElementById('stickman-rotator');
+    rotator.classList.remove('jump-anim', 'roll-anim');
 
     solutionArea.classList.add('hidden');
     nextRoundBtn.classList.add('hidden');
