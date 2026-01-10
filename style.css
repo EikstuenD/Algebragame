@@ -16,6 +16,7 @@ body {
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     text-align: center;
+    position: relative; /* For at shop overlay skal funke */
 }
 
 header {
@@ -23,6 +24,12 @@ header {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .score-board {
@@ -33,6 +40,63 @@ header {
     border-radius: 20px;
 }
 
+.shop-btn {
+    background-color: #ff9800;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.shop-btn:hover { background-color: #e68900; transform: scale(1.05); }
+
+/* --- BUTIKK UI --- */
+#shop-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 15px;
+}
+.shop-window {
+    background: white;
+    padding: 20px;
+    width: 80%;
+    max-height: 90%;
+    overflow-y: auto;
+    border-radius: 10px;
+    text-align: left;
+}
+.shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+}
+.shop-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    background: #f9f9f9;
+}
+.shop-item h4 { margin: 5px 0; font-size: 0.9em; }
+.shop-item p { color: #666; font-size: 0.8em; margin-bottom: 5px; }
+.buy-btn {
+    background: #4CAF50; color: white; border: none; padding: 5px 10px;
+    border-radius: 4px; cursor: pointer; font-size: 0.8em;
+}
+.buy-btn:disabled { background: #ccc; cursor: not-allowed; }
+.buy-btn.equip { background: #2196F3; } /* Blå knapp for "Bruk" */
+.shop-tabs { display: flex; gap: 10px; margin-bottom: 10px; }
+.shop-tabs button { background: #eee; border: none; padding: 8px; cursor: pointer; border-radius: 5px; }
+
+/* --- MATTE DISPLAY --- */
 .math-display {
     background: #333;
     color: #4ef037;
@@ -46,138 +110,127 @@ header {
     white-space: nowrap;
 }
 
-/* --- SCENE OG FIGUR --- */
+/* --- SCENE OG BAKGRUNNER --- */
 .scene {
     height: 200px;
     border-bottom: 4px solid #333;
     position: relative;
     margin-bottom: 20px;
-    background: linear-gradient(to bottom, #87CEEB 0%, #ffffff 100%);
     overflow: hidden;
+    transition: background 0.5s;
 }
 
-/* YTRE RAMME - Styrer posisjon venstre/høyre */
+/* Bakgrunns-temaer */
+.default-bg { background: linear-gradient(to bottom, #87CEEB 0%, #ffffff 100%); }
+.desert-bg { background: linear-gradient(to bottom, #FFD700 0%, #FF8C00 100%); }
+.forest-bg { background: linear-gradient(to bottom, #006400 60%, #8FBC8F 100%); }
+.night-bg { background: linear-gradient(to bottom, #000033 0%, #483D8B 100%); }
+
+.ground { width: 100%; height: 10px; position: absolute; bottom: 0; }
+.desert-bg .ground { background: #d2b48c; height: 20px; }
+.night-bg .ground { background: #111; }
+
+/* --- STREKMANN OG KLÆR --- */
 .stickman {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 60px;  /* Litt bredere container for å romme beina */
-    height: 100px;
-    transition: left 0.5s ease;
-    z-index: 10;
-    transform: translateX(-50%); /* Sentrer figuren nøyaktig over punktet */
+    position: absolute; bottom: 0; left: 50%; width: 60px; height: 100px;
+    transition: left 0.5s ease; z-index: 10; transform: translateX(-50%);
 }
-
-/* INDRE RAMME - Styrer rotasjon og hopp */
 .stickman-rotator {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    /* Vi roterer rundt midten av boksen (magen til figuren) */
-    transform-origin: center 60%; 
+    width: 100%; height: 100%; position: relative;
+    transform-origin: center 60%;
 }
 
-/* Hode */
+/* Grunnleggende figur */
 .stickman .head {
-    width: 30px;
-    height: 30px;
-    border: 3px solid black;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white; /* Fyll hodet med hvitt så bakgrunnen ikke synes gjennom */
-    z-index: 2;
+    width: 30px; height: 30px; border: 3px solid black; border-radius: 50%;
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    background: white; z-index: 2;
 }
-
-/* Kropp */
 .stickman .body {
-    width: 4px;
-    height: 40px;
-    background: black;
-    position: absolute;
-    top: 33px; /* Rett under hodet */
-    left: 50%;
-    transform: translateX(-50%);
+    width: 4px; height: 40px; background: black;
+    position: absolute; top: 33px; left: 50%; transform: translateX(-50%);
 }
-
-/* Armer */
 .stickman .arms {
-    width: 40px;
-    height: 4px;
-    background: black;
-    position: absolute;
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 40px; height: 4px; background: black;
+    position: absolute; top: 45px; left: 50%; transform: translateX(-50%);
 }
-
-/* BEINA - Nå som ekte div-elementer */
 .stickman .leg {
-    width: 4px;
-    height: 35px;
-    background: black;
-    position: absolute;
-    top: 68px; /* Starten av beina (slutten av kroppen) */
-    left: 50%;
-    transform-origin: top center; /* Roter ut fra hofta */
+    width: 4px; height: 35px; background: black;
+    position: absolute; top: 68px; left: 50%; transform-origin: top center;
+}
+.stickman .leg.left { transform: translateX(-50%) rotate(25deg); }
+.stickman .leg.right { transform: translateX(-50%) rotate(-25deg); }
+
+/* --- KLÆR (Påføres via klasser på stickman-rotator) --- */
+
+/* T-Skjorter (Endrer body og legger til "ermer") */
+.stickman-rotator.shirt-red .body { background: red; width: 14px; border-radius: 5px; }
+.stickman-rotator.shirt-red .arms { background: red; height: 8px; top: 43px; }
+
+.stickman-rotator.shirt-blue .body { background: blue; width: 14px; border-radius: 5px; }
+.stickman-rotator.shirt-blue .arms { background: blue; height: 8px; top: 43px; }
+
+/* Bukser (Endrer leg farge og tykkelse) */
+.stickman-rotator.pants-jeans .leg { background: darkblue; width: 7px; }
+.stickman-rotator.pants-green .leg { background: darkgreen; width: 7px; }
+
+/* --- HODEPLAGG (CSS Kunst) --- */
+.accessory { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* Cowboyhatt */
+.hat-cowboy::after {
+    content: ''; position: absolute;
+    top: -15px; left: -10px; width: 50px; height: 10px; /* Brem */
+    background: #8B4513; border-radius: 5px;
+}
+.hat-cowboy::before {
+    content: ''; position: absolute;
+    top: -30px; left: 0px; width: 30px; height: 20px; /* Topp */
+    background: #8B4513; border-radius: 5px 5px 0 0;
 }
 
-.stickman .leg.left {
-    transform: translateX(-50%) rotate(25deg);
+/* Caps */
+.hat-caps::before {
+    content: ''; position: absolute;
+    top: -5px; left: 0; width: 30px; height: 15px;
+    background: red; border-radius: 30px 30px 0 0;
+}
+.hat-caps::after {
+    content: ''; position: absolute;
+    top: 5px; left: 20px; width: 20px; height: 4px;
+    background: red;
 }
 
-.stickman .leg.right {
-    transform: translateX(-50%) rotate(-25deg);
+/* Briller */
+.hat-glasses::before {
+    content: ''; position: absolute;
+    top: 10px; left: 2px; width: 10px; height: 6px;
+    border: 2px solid black; border-radius: 3px; background: rgba(0,255,255,0.3);
+}
+.hat-glasses::after {
+    content: ''; position: absolute;
+    top: 10px; left: 18px; width: 10px; height: 6px;
+    border: 2px solid black; border-radius: 3px; background: rgba(0,255,255,0.3);
 }
 
-
-/* --- ANIMASJONER --- */
-
-/* Hopp */
+/* --- Animasjoner --- */
 .jump-anim { animation: jump 0.5s ease; }
 @keyframes jump {
     0% { transform: translateY(0); }
     50% { transform: translateY(-70px); }
     100% { transform: translateY(0); }
 }
-
-/* Rulle - 360 grader rundt */
 .roll-anim { animation: roll 0.7s linear; }
 @keyframes roll {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* --- KONTROLLER --- */
-.controls {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.control-group {
-    background: #f9f9f9;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    min-width: 120px;
-}
-
+/* --- Resten av GUI --- */
+.controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.control-group { background: #f9f9f9; padding: 8px; border-radius: 8px; border: 1px solid #ddd; min-width: 120px; }
 h3 { margin: 5px 0; font-size: 1em; }
-
-button {
-    cursor: pointer;
-    padding: 6px 10px;
-    margin: 2px;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.9em;
-    width: 100%;
-}
+button { cursor: pointer; padding: 6px 10px; margin: 2px; border: none; border-radius: 5px; width: 100%; transition: transform 0.1s;}
 button:active { transform: scale(0.95); }
 
 .control-group:nth-child(1) button { background-color: #ffcccb; }
@@ -185,40 +238,10 @@ button:active { transform: scale(0.95); }
 .control-group:nth-child(3) button { background-color: #ccccff; }
 .control-group:nth-child(4) button { background-color: #fff4cc; }
 
-.action-btn {
-    background-color: #333;
-    color: white;
-    font-size: 1.1em;
-    padding: 12px 24px;
-}
+.action-btn { background-color: #333; color: white; font-size: 1.1em; padding: 12px 24px; }
+.hidden { display: none !important; }
 
-.hidden { display: none; }
-
-.solution-area {
-    background: #fff8dc;
-    padding: 20px;
-    border-radius: 10px;
-    border: 2px solid #deb887;
-    margin-top: 20px;
-}
-
-.inputs {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin: 15px 0;
-}
-
-input {
-    width: 50px;
-    padding: 5px;
-    font-size: 1.1em;
-    text-align: center;
-}
-
-#feedback {
-    font-weight: bold;
-    font-size: 1.2em;
-    margin-top: 10px;
-}
+.solution-area { background: #fff8dc; padding: 20px; border-radius: 10px; border: 2px solid #deb887; margin-top: 20px; }
+.inputs { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin: 15px 0; }
+input { width: 50px; padding: 5px; font-size: 1.1em; text-align: center; }
+#feedback { font-weight: bold; font-size: 1.2em; margin-top: 10px; }
