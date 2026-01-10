@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algebra-Strekmannen</title>
+    <title>Algebra-Strekmannen: Ultimate Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Container for seiers-effekter (Konfetti o.l.) -->
+    <div id="victory-container"></div>
 
     <div class="game-container">
         <header>
@@ -17,37 +20,48 @@
             </div>
         </header>
 
-        <!-- BUTIKK VINDU (Skjult til vanlig) -->
+        <!-- BUTIKK VINDU -->
         <div id="shop-overlay" class="hidden">
             <div class="shop-window">
                 <h2>Butikk</h2>
                 <p>Kjøp oppgraderinger for poengene dine!</p>
+                
+                <!-- Meny-faner -->
                 <div class="shop-tabs">
                     <button onclick="filterShop('bg')">Bakgrunn</button>
-                    <button onclick="filterShop('head')">Hodeplagg</button>
+                    <button onclick="filterShop('head')">Hode</button>
                     <button onclick="filterShop('body')">Klær</button>
+                    <button onclick="filterShop('pet')">Kjæledyr</button>
+                    <button onclick="filterShop('trail')">Spor</button>
+                    <button onclick="filterShop('skin')">Matte-Design</button>
+                    <button onclick="filterShop('victory')">Feiring</button>
                 </div>
+
                 <div id="shop-items" class="shop-items">
-                    <!-- Her kommer varene via JavaScript -->
+                    <!-- Varer settes inn via JS -->
                 </div>
                 <button class="close-shop" onclick="toggleShop()">Lukk butikk</button>
             </div>
         </div>
 
-        <div class="math-display">
+        <!-- Matte-display med støtte for skins -->
+        <div id="math-container" class="math-display skin-default">
             <span id="expression">Gjør en bevegelse for å starte...</span>
         </div>
 
         <!-- Spillområde -->
-        <!-- Vi legger til en id "game-scene" her for å kunne endre bakgrunnen -->
         <div id="game-scene" class="scene default-bg">
             <div class="ground"></div>
             
             <div id="stickman" class="stickman">
-                <!-- Rotator klassen får klasser for klær (f.eks "shirt-red") -->
+                <!-- NY: Spor/Trail (bak figuren) -->
+                <div id="trail-display" class="trail-container"></div>
+
+                <!-- NY: Kjæledyr (ved siden av figuren) -->
+                <div id="pet-display" class="pet-container"></div>
+
                 <div id="stickman-rotator" class="stickman-rotator">
                     <div class="head">
-                        <!-- Plass til hatt/briller -->
                         <div id="accessory" class="accessory"></div>
                     </div>
                     <div class="body"></div>
