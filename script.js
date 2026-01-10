@@ -12,44 +12,37 @@ let forrigeRetning = 0;
 
 // --- BUTIKK DATA ---
 const shopData = [
-    // BAKGRUNNER
     { id: 'bg_default', type: 'bg', name: 'Standard Himmel', price: 0, cssClass: 'default-bg' },
     { id: 'bg_desert', type: 'bg', name: 'Ørken', price: 50, cssClass: 'desert-bg' },
     { id: 'bg_forest', type: 'bg', name: 'Skog', price: 100, cssClass: 'forest-bg' },
     { id: 'bg_night', type: 'bg', name: 'Natt', price: 200, cssClass: 'night-bg' },
 
-    // HODEPLAGG
     { id: 'hat_none', type: 'head', name: 'Ingen hatt', price: 0, cssClass: '' },
     { id: 'hat_cowboy', type: 'head', name: 'Cowboyhatt', price: 150, cssClass: 'hat-cowboy' },
     { id: 'hat_caps', type: 'head', name: 'Rød Caps', price: 100, cssClass: 'hat-caps' },
     { id: 'hat_glasses', type: 'head', name: 'Briller', price: 80, cssClass: 'hat-glasses' },
 
-    // KLÆR
     { id: 'body_none', type: 'body', name: 'Standard strek', price: 0, cssClass: '' },
     { id: 'shirt_red', type: 'body', name: 'Rød T-skjorte', price: 120, cssClass: 'shirt-red' },
     { id: 'shirt_blue', type: 'body', name: 'Blå T-skjorte', price: 120, cssClass: 'shirt-blue' },
     { id: 'pants_jeans', type: 'body', name: 'Dongeribukse', price: 120, cssClass: 'pants-jeans' },
     { id: 'full_outfit', type: 'body', name: 'Grønn drakt', price: 300, cssClass: 'shirt-blue pants-green' },
 
-    // KJÆLEDYR
     { id: 'pet_none', type: 'pet', name: 'Ingen dyr', price: 0, cssClass: '' },
     { id: 'pet_dog', type: 'pet', name: 'Hund', price: 250, cssClass: 'pet-dog' },
     { id: 'pet_robot', type: 'pet', name: 'Robot', price: 400, cssClass: 'pet-robot' },
     { id: 'pet_blob', type: 'pet', name: 'Matte-Blob', price: 350, cssClass: 'pet-blob' },
 
-    // SPOR/TRAILS
     { id: 'trail_none', type: 'trail', name: 'Ingen spor', price: 0, cssClass: '' },
     { id: 'trail_fire', type: 'trail', name: 'Ild', price: 300, cssClass: 'trail-fire' },
     { id: 'trail_rainbow', type: 'trail', name: 'Regnbue', price: 350, cssClass: 'trail-rainbow' },
     { id: 'trail_math', type: 'trail', name: 'Tall-dryss', price: 200, cssClass: 'trail-math' },
 
-    // MATTE SKINS
     { id: 'skin_default', type: 'skin', name: 'Standard', price: 0, cssClass: 'skin-default' },
     { id: 'skin_chalkboard', type: 'skin', name: 'Tavle', price: 150, cssClass: 'skin-chalkboard' },
     { id: 'skin_neon', type: 'skin', name: 'Neon', price: 250, cssClass: 'skin-neon' },
     { id: 'skin_parchment', type: 'skin', name: 'Pergament', price: 150, cssClass: 'skin-parchment' },
 
-    // SEIER/VICTORY
     { id: 'vic_none', type: 'victory', name: 'Ingen feiring', price: 0, cssClass: '' },
     { id: 'vic_confetti', type: 'victory', name: 'Konfetti', price: 200, cssClass: 'confetti' },
     { id: 'vic_disco', type: 'victory', name: 'Disco Lys', price: 300, cssClass: 'disco-bg' }
@@ -57,16 +50,10 @@ const shopData = [
 
 let inventory = ['bg_default', 'hat_none', 'body_none', 'pet_none', 'trail_none', 'skin_default', 'vic_none'];
 let equipped = { 
-    bg: 'bg_default', 
-    head: 'hat_none', 
-    body: 'body_none',
-    pet: 'pet_none',
-    trail: 'trail_none',
-    skin: 'skin_default',
-    victory: 'vic_none'
+    bg: 'bg_default', head: 'hat_none', body: 'body_none', pet: 'pet_none', trail: 'trail_none', skin: 'skin_default', victory: 'vic_none'
 };
 
-// --- ELEMENT-HJELPER ---
+// --- HJELPERE ---
 function getEl(id) {
     const el = document.getElementById(id);
     if (!el) console.warn("Fant ikke elementet:", id);
@@ -144,12 +131,10 @@ function startSolving() {
     
     clearTimeout(timerId);
     erTimerAktiv = false;
-
     getEl('controls').classList.add('hidden');
     getEl('solve-btn').classList.add('hidden');
     getEl('solution-area').classList.remove('hidden');
     
-    // Tøm input
     ['input-s', 'input-f', 'input-h', 'input-r'].forEach(id => {
         if(getEl(id)) getEl(id).value = '';
     });
@@ -167,12 +152,12 @@ function checkAnswer() {
             let points = terms.length * 10;
             money += points;
             getEl('money').innerText = money;
+            saveGame(); // LAGRE SPILLET
 
             getEl('feedback').innerText = `Riktig! Du tjente ${points} kr.`;
             getEl('feedback').style.color = 'green';
             getEl('next-round-btn').classList.remove('hidden');
-
-            playVictoryAnimation(); // Start feiring!
+            playVictoryAnimation();
         } else {
             getEl('feedback').innerText = "Feil svar. Prøv igjen!";
             getEl('feedback').style.color = 'red';
@@ -182,8 +167,6 @@ function checkAnswer() {
 
 function playVictoryAnimation() {
     const vicType = equipped.victory;
-    
-    // Konfetti
     if (vicType === 'vic_confetti') {
         const container = getEl('victory-container');
         container.innerHTML = '';
@@ -195,9 +178,7 @@ function playVictoryAnimation() {
             conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
             container.appendChild(conf);
         }
-    }
-    // Disco Bakgrunn
-    else if (vicType === 'vic_disco') {
+    } else if (vicType === 'vic_disco') {
         getEl('game-scene').classList.add('disco-bg');
     }
 }
@@ -220,34 +201,28 @@ function resetRound() {
     getEl('controls').classList.remove('hidden');
     getEl('solve-btn').classList.remove('hidden');
     getEl('feedback').innerText = "";
-    
-    // Fjern feiring
     getEl('victory-container').innerHTML = '';
     getEl('game-scene').classList.remove('disco-bg');
 }
 
-// --- BUTIKK ---
+// --- BUTIKK & LAGRING ---
+
 function toggleShop() {
     const shop = getEl('shop-overlay');
     shop.classList.toggle('hidden');
-    if (!shop.classList.contains('hidden')) {
-        filterShop('bg'); 
-    }
+    if (!shop.classList.contains('hidden')) { filterShop('bg'); }
 }
 
 function filterShop(category) {
     const container = getEl('shop-items');
     container.innerHTML = ""; 
-
     const itemsToShow = shopData.filter(item => item.type === category);
 
     itemsToShow.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'shop-item';
-        
         const isOwned = inventory.includes(item.id);
         const isEquipped = (equipped[item.type] === item.id);
-        
         let buttonHtml = "";
         if (isEquipped) {
             buttonHtml = `<button class="buy-btn" disabled>I bruk</button>`;
@@ -255,15 +230,9 @@ function filterShop(category) {
             buttonHtml = `<button class="buy-btn equip" onclick="equipItem('${item.id}')">Bruk</button>`;
         } else {
             const canAfford = money >= item.price;
-            const disabledAttr = canAfford ? "" : "disabled";
-            buttonHtml = `<button class="buy-btn" onclick="buyItem('${item.id}')" ${disabledAttr}>Kjøp (${item.price} kr)</button>`;
+            buttonHtml = `<button class="buy-btn" onclick="buyItem('${item.id}')" ${canAfford ? "" : "disabled"}>Kjøp (${item.price} kr)</button>`;
         }
-
-        itemDiv.innerHTML = `
-            <h4>${item.name}</h4>
-            <p>${item.price > 0 ? item.price + ' kr' : 'Gratis'}</p>
-            ${buttonHtml}
-        `;
+        itemDiv.innerHTML = `<h4>${item.name}</h4><p>${item.price} kr</p>${buttonHtml}`;
         container.appendChild(itemDiv);
     });
 }
@@ -274,7 +243,8 @@ function buyItem(itemId) {
         money -= item.price;
         getEl('money').innerText = money;
         inventory.push(itemId);
-        equipItem(itemId); 
+        equipItem(itemId);
+        saveGame(); // LAGRE
     } else { alert("Ikke nok penger!"); }
 }
 
@@ -282,36 +252,26 @@ function equipItem(itemId) {
     const item = shopData.find(i => i.id === itemId);
     equipped[item.type] = itemId;
     applyAppearance();
-    
-    // Refresh butikkvisning
-    if (!getEl('shop-overlay').classList.contains('hidden')) {
-        filterShop(item.type);
-    }
+    saveGame(); // LAGRE
+    if (!getEl('shop-overlay').classList.contains('hidden')) { filterShop(item.type); }
 }
 
 function applyAppearance() {
-    // 1. Bakgrunn
     const scene = getEl('game-scene');
-    scene.className = 'scene'; // Reset
+    scene.className = 'scene'; 
     const bgItem = shopData.find(i => i.id === equipped.bg);
-    if(bgItem) scene.classList.add(bgItem.cssClass);
-    else scene.classList.add('default-bg');
+    if(bgItem) scene.classList.add(bgItem.cssClass); else scene.classList.add('default-bg');
 
-    // 2. Klær (Body)
     const rotator = getEl('stickman-rotator');
     rotator.className = 'stickman-rotator'; 
     const bodyItem = shopData.find(i => i.id === equipped.body);
-    if (bodyItem && bodyItem.cssClass) {
-        bodyItem.cssClass.split(' ').forEach(c => rotator.classList.add(c));
-    }
+    if (bodyItem && bodyItem.cssClass) { bodyItem.cssClass.split(' ').forEach(c => rotator.classList.add(c)); }
 
-    // 3. Hode (Head)
     const acc = getEl('accessory');
     acc.className = 'accessory';
     const headItem = shopData.find(i => i.id === equipped.head);
     if(headItem) acc.classList.add(headItem.cssClass);
 
-    // 4. Kjæledyr (Pet)
     const petDiv = getEl('pet-display');
     petDiv.innerHTML = '';
     const petItem = shopData.find(i => i.id === equipped.pet);
@@ -321,20 +281,50 @@ function applyAppearance() {
         petDiv.appendChild(p);
     }
 
-    // 5. Spor (Trail)
     const trailDiv = getEl('trail-display');
     trailDiv.className = 'trail-container';
     const trailItem = shopData.find(i => i.id === equipped.trail);
     if(trailItem) trailDiv.classList.add(trailItem.cssClass);
 
-    // 6. Matte Skin
     const mathDiv = getEl('math-container');
     mathDiv.className = 'math-display';
     const skinItem = shopData.find(i => i.id === equipped.skin);
-    if(skinItem) mathDiv.classList.add(skinItem.cssClass);
-    else mathDiv.classList.add('skin-default');
+    if(skinItem) mathDiv.classList.add(skinItem.cssClass); else mathDiv.classList.add('skin-default');
 }
 
-// Init
-getEl('money').innerText = money;
-applyAppearance();
+// --- LOCALSTORAGE FUNKSJONER ---
+function saveGame() {
+    const saveData = {
+        money: money,
+        inventory: inventory,
+        equipped: equipped
+    };
+    localStorage.setItem('algebraGameSave', JSON.stringify(saveData));
+}
+
+function loadGame() {
+    const saved = localStorage.getItem('algebraGameSave');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            money = data.money || 0;
+            inventory = data.inventory || inventory;
+            equipped = data.equipped || equipped;
+            
+            getEl('money').innerText = money;
+            applyAppearance();
+        } catch (e) {
+            console.error("Kunne ikke laste lagring", e);
+        }
+    }
+}
+
+function clearSave() {
+    if(confirm("Er du sikker på at du vil slette lagringen og starte på nytt?")) {
+        localStorage.removeItem('algebraGameSave');
+        location.reload();
+    }
+}
+
+// Start spillet
+loadGame();
