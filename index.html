@@ -22,11 +22,16 @@
         <!-- Spillområdet med strekmannen -->
         <div class="scene">
             <div class="ground"></div>
+            <!-- Den ytre boksen styrer posisjon (bortover) -->
             <div id="stickman" class="stickman">
-                <div class="head"></div>
-                <div class="body"></div>
-                <div class="arms"></div>
-                <div class="legs"></div>
+                <!-- Den indre boksen styrer rotasjon og hopping -->
+                <div id="stickman-rotator" class="stickman-rotator">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="arms"></div>
+                    <!-- Bena tegnes via CSS på rotatoren, men vi beholder strukturen -->
+                    <div class="legs-placeholder"></div>
+                </div>
             </div>
         </div>
 
@@ -47,7 +52,6 @@
                 <button onclick="move('h', 1)">Fram (+1h)</button>
                 <button onclick="move('h', -1)">Tilbake (-1h)</button>
             </div>
-            <!-- NY: Rulle-knapper -->
             <div class="control-group">
                 <h3>Rulle (r)</h3>
                 <button onclick="move('r', 1)">Fram (+1r)</button>
@@ -66,7 +70,6 @@
                 <label>Antall s: <input type="number" id="input-s"></label>
                 <label>Antall f: <input type="number" id="input-f"></label>
                 <label>Antall h: <input type="number" id="input-h"></label>
-                <!-- NY: Input for r -->
                 <label>Antall r: <input type="number" id="input-r"></label>
             </div>
 
