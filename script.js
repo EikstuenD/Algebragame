@@ -12,49 +12,69 @@ let forrigeRetning = 0;
 
 // --- BUTIKK DATA ---
 const shopData = [
+    // BAKGRUNNER
     { id: 'bg_default', type: 'bg', name: 'Standard Himmel', price: 0, cssClass: 'default-bg' },
     { id: 'bg_desert', type: 'bg', name: 'Ørken', price: 50, cssClass: 'desert-bg' },
     { id: 'bg_forest', type: 'bg', name: 'Skog', price: 100, cssClass: 'forest-bg' },
     { id: 'bg_night', type: 'bg', name: 'Natt', price: 200, cssClass: 'night-bg' },
-    
+
+    // HODEPLAGG
     { id: 'hat_none', type: 'head', name: 'Ingen hatt', price: 0, cssClass: '' },
     { id: 'hat_cowboy', type: 'head', name: 'Cowboyhatt', price: 150, cssClass: 'hat-cowboy' },
     { id: 'hat_caps', type: 'head', name: 'Rød Caps', price: 100, cssClass: 'hat-caps' },
     { id: 'hat_glasses', type: 'head', name: 'Briller', price: 80, cssClass: 'hat-glasses' },
 
+    // KLÆR
     { id: 'body_none', type: 'body', name: 'Standard strek', price: 0, cssClass: '' },
     { id: 'shirt_red', type: 'body', name: 'Rød T-skjorte', price: 120, cssClass: 'shirt-red' },
     { id: 'shirt_blue', type: 'body', name: 'Blå T-skjorte', price: 120, cssClass: 'shirt-blue' },
     { id: 'pants_jeans', type: 'body', name: 'Dongeribukse', price: 120, cssClass: 'pants-jeans' },
-    { id: 'full_outfit', type: 'body', name: 'Grønn drakt', price: 300, cssClass: 'shirt-blue pants-green' }
+    { id: 'full_outfit', type: 'body', name: 'Grønn drakt', price: 300, cssClass: 'shirt-blue pants-green' },
+
+    // KJÆLEDYR (NY)
+    { id: 'pet_none', type: 'pet', name: 'Ingen dyr', price: 0, cssClass: '' },
+    { id: 'pet_dog', type: 'pet', name: 'Hund', price: 250, cssClass: 'pet-dog' },
+    { id: 'pet_robot', type: 'pet', name: 'Robot', price: 400, cssClass: 'pet-robot' },
+    { id: 'pet_blob', type: 'pet', name: 'Matte-Blob', price: 350, cssClass: 'pet-blob' },
+
+    // SPOR/TRAILS (NY)
+    { id: 'trail_none', type: 'trail', name: 'Ingen spor', price: 0, cssClass: '' },
+    { id: 'trail_fire', type: 'trail', name: 'Ild', price: 300, cssClass: 'trail-fire' },
+    { id: 'trail_rainbow', type: 'trail', name: 'Regnbue', price: 350, cssClass: 'trail-rainbow' },
+    { id: 'trail_math', type: 'trail', name: 'Tall-dryss', price: 200, cssClass: 'trail-math' },
+
+    // MATTE SKINS (NY)
+    { id: 'skin_default', type: 'skin', name: 'Standard', price: 0, cssClass: 'skin-default' },
+    { id: 'skin_chalkboard', type: 'skin', name: 'Tavle', price: 150, cssClass: 'skin-chalkboard' },
+    { id: 'skin_neon', type: 'skin', name: 'Neon', price: 250, cssClass: 'skin-neon' },
+    { id: 'skin_parchment', type: 'skin', name: 'Pergament', price: 150, cssClass: 'skin-parchment' },
+
+    // SEIER/VICTORY (NY)
+    { id: 'vic_none', type: 'victory', name: 'Ingen feiring', price: 0, cssClass: '' },
+    { id: 'vic_confetti', type: 'victory', name: 'Konfetti', price: 200, cssClass: 'confetti' },
+    { id: 'vic_disco', type: 'victory', name: 'Disco Lys', price: 300, cssClass: 'disco-bg' }
 ];
 
-let inventory = ['bg_default', 'hat_none', 'body_none'];
-let equipped = { bg: 'bg_default', head: 'hat_none', body: 'body_none' };
+let inventory = ['bg_default', 'hat_none', 'body_none', 'pet_none', 'trail_none', 'skin_default', 'vic_none'];
+let equipped = { 
+    bg: 'bg_default', 
+    head: 'hat_none', 
+    body: 'body_none',
+    pet: 'pet_none',
+    trail: 'trail_none',
+    skin: 'skin_default',
+    victory: 'vic_none'
+};
 
-// --- HENT ELEMENTER SIKKERT ---
-// Vi bruker en trygg metode for å finne elementer så ikke hele spillet krasjer hvis ett mangler
+// --- ELEMENT-HJELPER ---
 function getEl(id) {
     const el = document.getElementById(id);
-    if (!el) console.error("Fant ikke elementet med ID:", id);
+    if (!el) console.warn("Fant ikke elementet:", id);
     return el;
 }
 
-const stickman = getEl('stickman');
-const expressionDisplay = getEl('expression');
-const controlsDiv = getEl('controls');
-const solveBtn = getEl('solve-btn');
-const solutionArea = getEl('solution-area');
-const feedbackText = getEl('feedback');
-const moneyDisplay = getEl('money'); // VIKTIG: I index.html må det stå id="money", ikke id="score"
-const nextRoundBtn = getEl('next-round-btn');
-const shopOverlay = getEl('shop-overlay');
-
 // --- SPILL LOGIKK ---
-
 function move(type, value) {
-    if(!stickman) return; // Sikkerhet
-
     totals[type] += value;
     let denneRetning = Math.sign(value); 
 
@@ -80,9 +100,10 @@ function move(type, value) {
 }
 
 function updateExpressionDisplay() {
-    if (!expressionDisplay) return;
+    const disp = getEl('expression');
+    if (!disp) return;
     if (terms.length === 0) {
-        expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
+        disp.innerText = "Gjør en bevegelse for å starte...";
         return;
     }
     let str = "";
@@ -91,7 +112,7 @@ function updateExpressionDisplay() {
         if (i === 0) str += term.val < 0 ? `-${Math.abs(term.val)}${term.type}` : `${Math.abs(term.val)}${term.type}`;
         else str += ` ${sign} ${Math.abs(term.val)}${term.type}`;
     });
-    expressionDisplay.innerText = str;
+    disp.innerText = str;
 }
 
 function updateVisuals(type, value) {
@@ -106,9 +127,10 @@ function updateVisuals(type, value) {
     if (position > 95) position = 95;
     if (position < 5) position = 5;
 
+    const stickman = getEl('stickman');
     if(stickman) stickman.style.left = position + "%";
 
-    const rotator = document.getElementById('stickman-rotator');
+    const rotator = getEl('stickman-rotator');
     if(rotator) {
         rotator.classList.remove('jump-anim', 'roll-anim');
         void rotator.offsetWidth; 
@@ -120,56 +142,63 @@ function updateVisuals(type, value) {
 function startSolving() {
     if (terms.length === 0) { alert("Gå litt først!"); return; }
     
-    // Stopp timer
     clearTimeout(timerId);
     erTimerAktiv = false;
 
-    // Bytt visning
-    if(controlsDiv) controlsDiv.classList.add('hidden');
-    if(solveBtn) solveBtn.classList.add('hidden');
-    if(solutionArea) solutionArea.classList.remove('hidden');
+    getEl('controls').classList.add('hidden');
+    getEl('solve-btn').classList.add('hidden');
+    getEl('solution-area').classList.remove('hidden');
     
     // Tøm input
-    if(getEl('input-s')) getEl('input-s').value = '';
-    if(getEl('input-f')) getEl('input-f').value = '';
-    if(getEl('input-h')) getEl('input-h').value = '';
-    if(getEl('input-r')) getEl('input-r').value = '';
-    if(feedbackText) feedbackText.innerText = '';
+    ['input-s', 'input-f', 'input-h', 'input-r'].forEach(id => {
+        if(getEl(id)) getEl(id).value = '';
+    });
+    getEl('feedback').innerText = '';
 }
 
 function checkAnswer() {
-    // Vi bruker try-catch for å fange feil hvis noe kræsjer
     try {
-        let uS = parseInt(document.getElementById('input-s').value) || 0;
-        let uF = parseInt(document.getElementById('input-f').value) || 0;
-        let uH = parseInt(document.getElementById('input-h').value) || 0;
-        let uR = parseInt(document.getElementById('input-r').value) || 0;
-
-        // Debugging: Hvis du lurer på hva fasiten er
-        console.log("Ditt svar:", uS, uF, uH, uR);
-        console.log("Fasit:", totals.s, totals.f, totals.h, totals.r);
+        let uS = parseInt(getEl('input-s').value) || 0;
+        let uF = parseInt(getEl('input-f').value) || 0;
+        let uH = parseInt(getEl('input-h').value) || 0;
+        let uR = parseInt(getEl('input-r').value) || 0;
 
         if (uS === totals.s && uF === totals.f && uH === totals.h && uR === totals.r) {
             let points = terms.length * 10;
             money += points;
-            
-            if(moneyDisplay) moneyDisplay.innerText = money;
-            else alert("Fant ikke pengetelleren (moneyDisplay). Sjekk at du bruker riktig HTML.");
+            getEl('money').innerText = money;
 
-            if(feedbackText) {
-                feedbackText.innerText = `Riktig! Du tjente ${points} kr.`;
-                feedbackText.style.color = 'green';
-            }
-            if(nextRoundBtn) nextRoundBtn.classList.remove('hidden');
+            getEl('feedback').innerText = `Riktig! Du tjente ${points} kr.`;
+            getEl('feedback').style.color = 'green';
+            getEl('next-round-btn').classList.remove('hidden');
+
+            playVictoryAnimation(); // Start feiring!
         } else {
-            if(feedbackText) {
-                feedbackText.innerText = "Feil svar. Prøv igjen!";
-                feedbackText.style.color = 'red';
-            }
+            getEl('feedback').innerText = "Feil svar. Prøv igjen!";
+            getEl('feedback').style.color = 'red';
         }
-    } catch (error) {
-        alert("Noe gikk galt i sjekk-svar funksjonen: " + error.message);
-        console.error(error);
+    } catch (e) { console.error(e); }
+}
+
+function playVictoryAnimation() {
+    const vicType = equipped.victory;
+    
+    // Konfetti
+    if (vicType === 'vic_confetti') {
+        const container = getEl('victory-container');
+        container.innerHTML = '';
+        for(let i=0; i<30; i++) {
+            const conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.random() * 100 + 'vw';
+            conf.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            container.appendChild(conf);
+        }
+    }
+    // Disco Bakgrunn
+    else if (vicType === 'vic_disco') {
+        getEl('game-scene').classList.add('disco-bg');
     }
 }
 
@@ -182,34 +211,32 @@ function resetRound() {
     erTimerAktiv = false;
     forrigeType = null;
     
-    if(expressionDisplay) expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
-    if(stickman) stickman.style.left = "50%";
+    updateExpressionDisplay();
+    getEl('stickman').style.left = "50%";
+    getEl('stickman-rotator').classList.remove('jump-anim', 'roll-anim');
     
-    const rotator = document.getElementById('stickman-rotator');
-    if(rotator) rotator.classList.remove('jump-anim', 'roll-anim');
+    getEl('solution-area').classList.add('hidden');
+    getEl('next-round-btn').classList.add('hidden');
+    getEl('controls').classList.remove('hidden');
+    getEl('solve-btn').classList.remove('hidden');
+    getEl('feedback').innerText = "";
     
-    if(solutionArea) solutionArea.classList.add('hidden');
-    if(nextRoundBtn) nextRoundBtn.classList.add('hidden');
-    if(controlsDiv) controlsDiv.classList.remove('hidden');
-    if(solveBtn) solveBtn.classList.remove('hidden');
-    if(feedbackText) feedbackText.innerText = "";
+    // Fjern feiring
+    getEl('victory-container').innerHTML = '';
+    getEl('game-scene').classList.remove('disco-bg');
 }
 
-// --- BUTIKK FUNKSJONER ---
-
+// --- BUTIKK ---
 function toggleShop() {
-    if(shopOverlay) {
-        shopOverlay.classList.toggle('hidden');
-        if (!shopOverlay.classList.contains('hidden')) {
-            filterShop('bg'); 
-        }
+    const shop = getEl('shop-overlay');
+    shop.classList.toggle('hidden');
+    if (!shop.classList.contains('hidden')) {
+        filterShop('bg'); 
     }
 }
 
 function filterShop(category) {
-    const container = document.getElementById('shop-items');
-    if(!container) return;
-    
+    const container = getEl('shop-items');
     container.innerHTML = ""; 
 
     const itemsToShow = shopData.filter(item => item.type === category);
@@ -222,7 +249,6 @@ function filterShop(category) {
         const isEquipped = (equipped[item.type] === item.id);
         
         let buttonHtml = "";
-        
         if (isEquipped) {
             buttonHtml = `<button class="buy-btn" disabled>I bruk</button>`;
         } else if (isOwned) {
@@ -246,51 +272,69 @@ function buyItem(itemId) {
     const item = shopData.find(i => i.id === itemId);
     if (money >= item.price) {
         money -= item.price;
-        if(moneyDisplay) moneyDisplay.innerText = money;
+        getEl('money').innerText = money;
         inventory.push(itemId);
         equipItem(itemId); 
-        filterShop(item.type); 
-    } else {
-        alert("Du har ikke nok penger!");
-    }
+    } else { alert("Ikke nok penger!"); }
 }
 
 function equipItem(itemId) {
     const item = shopData.find(i => i.id === itemId);
     equipped[item.type] = itemId;
     applyAppearance();
-    if (shopOverlay && !shopOverlay.classList.contains('hidden')) {
+    
+    // Refresh butikkvisning
+    if (!getEl('shop-overlay').classList.contains('hidden')) {
         filterShop(item.type);
     }
 }
 
 function applyAppearance() {
-    const scene = document.getElementById('game-scene');
-    if(scene) {
-        scene.className = 'scene'; 
-        const bgItem = shopData.find(i => i.id === equipped.bg);
-        if (bgItem && bgItem.cssClass) scene.classList.add(bgItem.cssClass);
-        else scene.classList.add('default-bg');
+    // 1. Bakgrunn
+    const scene = getEl('game-scene');
+    scene.className = 'scene'; // Reset
+    const bgItem = shopData.find(i => i.id === equipped.bg);
+    if(bgItem) scene.classList.add(bgItem.cssClass);
+    else scene.classList.add('default-bg');
+
+    // 2. Klær (Body)
+    const rotator = getEl('stickman-rotator');
+    rotator.className = 'stickman-rotator'; 
+    const bodyItem = shopData.find(i => i.id === equipped.body);
+    if (bodyItem && bodyItem.cssClass) {
+        bodyItem.cssClass.split(' ').forEach(c => rotator.classList.add(c));
     }
 
-    const rotator = document.getElementById('stickman-rotator');
-    if(rotator) {
-        rotator.className = 'stickman-rotator'; 
-        const bodyItem = shopData.find(i => i.id === equipped.body);
-        if (bodyItem && bodyItem.cssClass) {
-            const classes = bodyItem.cssClass.split(' ');
-            classes.forEach(c => rotator.classList.add(c));
-        }
+    // 3. Hode (Head)
+    const acc = getEl('accessory');
+    acc.className = 'accessory';
+    const headItem = shopData.find(i => i.id === equipped.head);
+    if(headItem) acc.classList.add(headItem.cssClass);
+
+    // 4. Kjæledyr (Pet)
+    const petDiv = getEl('pet-display');
+    petDiv.innerHTML = '';
+    const petItem = shopData.find(i => i.id === equipped.pet);
+    if(petItem && petItem.cssClass) {
+        const p = document.createElement('div');
+        p.className = petItem.cssClass;
+        petDiv.appendChild(p);
     }
 
-    const accessoryDiv = document.getElementById('accessory');
-    if(accessoryDiv) {
-        accessoryDiv.className = 'accessory'; 
-        const headItem = shopData.find(i => i.id === equipped.head);
-        if (headItem && headItem.cssClass) accessoryDiv.classList.add(headItem.cssClass);
-    }
+    // 5. Spor (Trail)
+    const trailDiv = getEl('trail-display');
+    trailDiv.className = 'trail-container';
+    const trailItem = shopData.find(i => i.id === equipped.trail);
+    if(trailItem) trailDiv.classList.add(trailItem.cssClass);
+
+    // 6. Matte Skin
+    const mathDiv = getEl('math-container');
+    mathDiv.className = 'math-display';
+    const skinItem = shopData.find(i => i.id === equipped.skin);
+    if(skinItem) mathDiv.classList.add(skinItem.cssClass);
+    else mathDiv.classList.add('skin-default');
 }
 
-// Initialiser spillet
-if(moneyDisplay) moneyDisplay.innerText = money;
+// Init
+getEl('money').innerText = money;
 applyAppearance();
