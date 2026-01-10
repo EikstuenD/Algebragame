@@ -152,7 +152,7 @@ function checkAnswer() {
             let points = terms.length * 10;
             money += points;
             getEl('money').innerText = money;
-            saveGame(); // LAGRE SPILLET
+            saveGame();
 
             getEl('feedback').innerText = `Riktig! Du tjente ${points} kr.`;
             getEl('feedback').style.color = 'green';
@@ -244,7 +244,7 @@ function buyItem(itemId) {
         getEl('money').innerText = money;
         inventory.push(itemId);
         equipItem(itemId);
-        saveGame(); // LAGRE
+        saveGame();
     } else { alert("Ikke nok penger!"); }
 }
 
@@ -252,26 +252,30 @@ function equipItem(itemId) {
     const item = shopData.find(i => i.id === itemId);
     equipped[item.type] = itemId;
     applyAppearance();
-    saveGame(); // LAGRE
+    saveGame();
     if (!getEl('shop-overlay').classList.contains('hidden')) { filterShop(item.type); }
 }
 
 function applyAppearance() {
+    // 1. Scene
     const scene = getEl('game-scene');
     scene.className = 'scene'; 
     const bgItem = shopData.find(i => i.id === equipped.bg);
     if(bgItem) scene.classList.add(bgItem.cssClass); else scene.classList.add('default-bg');
 
+    // 2. Klær
     const rotator = getEl('stickman-rotator');
     rotator.className = 'stickman-rotator'; 
     const bodyItem = shopData.find(i => i.id === equipped.body);
     if (bodyItem && bodyItem.cssClass) { bodyItem.cssClass.split(' ').forEach(c => rotator.classList.add(c)); }
 
+    // 3. Hode
     const acc = getEl('accessory');
     acc.className = 'accessory';
     const headItem = shopData.find(i => i.id === equipped.head);
     if(headItem) acc.classList.add(headItem.cssClass);
 
+    // 4. Kjæledyr
     const petDiv = getEl('pet-display');
     petDiv.innerHTML = '';
     const petItem = shopData.find(i => i.id === equipped.pet);
@@ -281,18 +285,20 @@ function applyAppearance() {
         petDiv.appendChild(p);
     }
 
+    // 5. Spor
     const trailDiv = getEl('trail-display');
     trailDiv.className = 'trail-container';
     const trailItem = shopData.find(i => i.id === equipped.trail);
     if(trailItem) trailDiv.classList.add(trailItem.cssClass);
 
+    // 6. Skin
     const mathDiv = getEl('math-container');
     mathDiv.className = 'math-display';
     const skinItem = shopData.find(i => i.id === equipped.skin);
     if(skinItem) mathDiv.classList.add(skinItem.cssClass); else mathDiv.classList.add('skin-default');
 }
 
-// --- LOCALSTORAGE FUNKSJONER ---
+// --- LOCALSTORAGE ---
 function saveGame() {
     const saveData = {
         money: money,
@@ -326,5 +332,5 @@ function clearSave() {
     }
 }
 
-// Start spillet
+// Init
 loadGame();
