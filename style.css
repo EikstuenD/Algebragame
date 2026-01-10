@@ -33,7 +33,6 @@ header {
     border-radius: 20px;
 }
 
-/* Matematikk-visning */
 .math-display {
     background: #333;
     color: #4ef037;
@@ -47,7 +46,7 @@ header {
     white-space: nowrap;
 }
 
-/* --- Scene og Strekmann --- */
+/* --- SCENE OG FIGUR --- */
 .scene {
     height: 200px;
     border-bottom: 4px solid #333;
@@ -57,64 +56,81 @@ header {
     overflow: hidden;
 }
 
-/* Den ytre boksen styrer KUN posisjon (bortover) */
+/* YTRE RAMME - Styrer posisjon venstre/høyre */
 .stickman {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 40px;
+    width: 60px;  /* Litt bredere container for å romme beina */
     height: 100px;
-    transition: left 0.5s ease; /* Myk bevegelse bortover */
+    transition: left 0.5s ease;
     z-index: 10;
+    transform: translateX(-50%); /* Sentrer figuren nøyaktig over punktet */
 }
 
-/* Den indre boksen styrer animasjon (hopping og rulling) */
+/* INDRE RAMME - Styrer rotasjon og hopp */
 .stickman-rotator {
     width: 100%;
     height: 100%;
     position: relative;
-    transform-origin: center center; /* Snurrer rundt magen */
+    /* Vi roterer rundt midten av boksen (magen til figuren) */
+    transform-origin: center 60%; 
 }
 
-/* Hodet */
+/* Hode */
 .stickman .head {
     width: 30px;
     height: 30px;
     border: 3px solid black;
     border-radius: 50%;
-    margin: 0 auto;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white; /* Fyll hodet med hvitt så bakgrunnen ikke synes gjennom */
+    z-index: 2;
 }
 
-/* Kroppen */
+/* Kropp */
 .stickman .body {
-    width: 3px;
+    width: 4px;
     height: 40px;
     background: black;
-    margin: 0 auto;
+    position: absolute;
+    top: 33px; /* Rett under hodet */
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Armer */
 .stickman .arms {
     width: 40px;
-    height: 3px;
+    height: 4px;
     background: black;
     position: absolute;
-    top: 40px;
-    left: 0;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-/* Bena - Tegnes direkte på rotatoren for å følge animasjonen */
-.stickman-rotator::before, .stickman-rotator::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    width: 3px;
-    height: 30px;
+/* BEINA - Nå som ekte div-elementer */
+.stickman .leg {
+    width: 4px;
+    height: 35px;
     background: black;
-    transform-origin: top center;
+    position: absolute;
+    top: 68px; /* Starten av beina (slutten av kroppen) */
+    left: 50%;
+    transform-origin: top center; /* Roter ut fra hofta */
 }
-.stickman-rotator::before { left: 50%; transform: rotate(20deg); }
-.stickman-rotator::after { left: 50%; transform: rotate(-20deg); }
+
+.stickman .leg.left {
+    transform: translateX(-50%) rotate(25deg);
+}
+
+.stickman .leg.right {
+    transform: translateX(-50%) rotate(-25deg);
+}
 
 
 /* --- ANIMASJONER --- */
@@ -123,19 +139,18 @@ header {
 .jump-anim { animation: jump 0.5s ease; }
 @keyframes jump {
     0% { transform: translateY(0); }
-    50% { transform: translateY(-60px); }
+    50% { transform: translateY(-70px); }
     100% { transform: translateY(0); }
 }
 
-/* Rulle */
-.roll-anim { animation: roll 0.6s linear; }
+/* Rulle - 360 grader rundt */
+.roll-anim { animation: roll 0.7s linear; }
 @keyframes roll {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-
-/* --- Kontroller --- */
+/* --- KONTROLLER --- */
 .controls {
     display: flex;
     justify-content: center;
@@ -161,27 +176,22 @@ button {
     border: none;
     border-radius: 5px;
     font-size: 0.9em;
-    transition: transform 0.1s;
     width: 100%;
 }
-
 button:active { transform: scale(0.95); }
 
-/* Fargekoding */
-.control-group:nth-child(1) button { background-color: #ffcccb; } /* s */
-.control-group:nth-child(2) button { background-color: #ccffcc; } /* f */
-.control-group:nth-child(3) button { background-color: #ccccff; } /* h */
-.control-group:nth-child(4) button { background-color: #fff4cc; } /* r */
+.control-group:nth-child(1) button { background-color: #ffcccb; }
+.control-group:nth-child(2) button { background-color: #ccffcc; }
+.control-group:nth-child(3) button { background-color: #ccccff; }
+.control-group:nth-child(4) button { background-color: #fff4cc; }
 
 .action-btn {
     background-color: #333;
     color: white;
     font-size: 1.1em;
     padding: 12px 24px;
-    width: auto;
 }
 
-/* --- Løsningsområde --- */
 .hidden { display: none; }
 
 .solution-area {
