@@ -1,13 +1,14 @@
 // Variabler for spillet
-let terms = []; // Liste som holder leddene (f.eks [{type:'s', val:3}, {type:'h', val:2}])
+let terms = []; // Liste som holder leddene
 let totals = { s: 0, f: 0, h: 0 }; // Fasiten for sluttsum
-let position = 50; // Strekmannens posisjon
+let position = 50; // Strekmannens posisjon (50%)
 let currentScore = 0;
 
-// Variabler for "sammenslåing" (timer-logikk)
-let mergeTimer = null; // Holder styr på 2-sekunders klokka
-let lastMoveType = null; // Hva var forrige trekk? (s, f eller h)
-let lastMoveSign = 0; // Var forrige trekk positivt eller negativt?
+// Timer-variabler
+let timerId = null; // ID-en til selve tidsuret
+let erTimerAktiv = false; // Sier om vi er "innenfor tiden" for å slå sammen
+let forrigeType = null; // Husker om vi trykket s, f eller h sist
+let forrigeRetning = 0; // Husker om vi gikk fram (1) eller tilbake (-1)
 
 // Elementer fra HTML
 const stickman = document.getElementById('stickman');
@@ -20,39 +21,47 @@ const scoreDisplay = document.getElementById('score');
 const nextRoundBtn = document.getElementById('next-round-btn');
 
 function move(type, value) {
-    // 1. Oppdater fasiten (matten i bakgrunnen)
+    // 1. Oppdater fasiten i bakgrunnen
     totals[type] += value;
 
-    // 2. Logikk for uttrykket på skjermen
-    // Sjekk om vi skal slå sammen med forrige ledd
-    // Regler: Må være samme type (s/f/h), samme retning (fortegn), og tidsuret må være aktivt
-    let currentSign = Math.sign(value); // Gir 1 for positiv, -1 for negativ
+    // Sjekk retning (er det + eller -?)
+    let denneRetning = Math.sign(value); 
 
-    if (mergeTimer && lastMoveType === type && lastMoveSign === currentSign) {
-        // MERGE: Vi legger til verdien på det SISTE leddet i listen
-        let lastIndex = terms.length - 1;
-        terms[lastIndex].val += value;
+    // 2. Logikk for å slå sammen eller lage nytt ledd
+    // Vi slår sammen HVIS: 
+    // Tiden ikke er ute ENNÅ (erTimerAktiv er true)
+    // OG vi trykker på samme knapp (type og retning er lik)
+    if (erTimerAktiv === true && forrigeType === type && forrigeRetning === denneRetning) {
+        
+        // SLÅ SAMMEN: Vi endrer bare verdien på det siste leddet
+        let sisteIndex = terms.length - 1;
+        terms[sisteIndex].val += value;
+        
     } else {
-        // NYTT LEDD: Vi lager et nytt objekt i listen
+        
+        // NYTT LEDD: Tiden er ute, eller vi trykket på noe annet
         terms.push({ type: type, val: value });
     }
 
-    // Oppdater status for neste klikk
-    lastMoveType = type;
-    lastMoveSign = currentSign;
+    // 3. Nullstill og start tidsuret på nytt
+    // Hver gang du trykker, får du 2 nye sekunder
+    if (timerId) {
+        clearTimeout(timerId); // Stopp den gamle klokka
+    }
+    
+    // Oppdater status
+    erTimerAktiv = true;
+    forrigeType = type;
+    forrigeRetning = denneRetning;
 
-    // Reset tidsuret (hvis du klikker igjen innen 2 sek, merges det videre)
-    clearTimeout(mergeTimer);
-    mergeTimer = setTimeout(() => {
-        // Når tiden er ute, nullstiller vi "sist brukt", slik at neste klikk blir nytt ledd
-        mergeTimer = null;
-        lastMoveType = null;
-    }, 2000); // 2000 millisekunder = 2 sekunder
+    // Start nedtellingen på 2 sekunder (2000 ms)
+    timerId = setTimeout(function() {
+        erTimerAktiv = false; // Tiden er ute!
+        forrigeType = null;
+    }, 2000);
 
-    // 3. Oppdater teksten på skjermen basert på listen vår
+    // 4. Oppdater skjermen
     updateExpressionDisplay();
-
-    // 4. Animer strekmannen
     updateVisuals(type, value);
 }
 
@@ -64,23 +73,27 @@ function updateExpressionDisplay() {
 
     let expressionString = "";
 
-    terms.forEach((term, index) => {
+    for (let i = 0; i < terms.length; i++) {
+        let term = terms[i];
         let val = term.val;
         let type = term.type;
-        let absVal = Math.abs(val);
-        let sign = val >= 0 ? "+" : "-";
+        
+        let absVal = Math.abs(val); // Verdien uten minus (f.eks 3)
+        let sign = val >= 0 ? "+" : "-"; // Fortegnet
 
-        // Hvis det er aller første leddet
-        if (index === 0) {
-            // Hvis tallet er negativt viser vi minustegnet, ellers ingenting foran
-            if (val < 0) expressionString += `-${absVal}${type}`;
-            else expressionString += `${absVal}${type}`;
-        } 
-        // For alle andre ledd etter det første
-        else {
+        // Logikk for å bygge tekststrengen pent
+        if (i === 0) {
+            // Første ledd: Vis minus hvis negativt, ellers ingenting foran
+            if (val < 0) {
+                expressionString += `-${absVal}${type}`;
+            } else {
+                expressionString += `${absVal}${type}`;
+            }
+        } else {
+            // Andre ledd og utover: Alltid mellomrom og fortegn først
             expressionString += ` ${sign} ${absVal}${type}`;
         }
-    });
+    }
 
     expressionDisplay.innerText = expressionString;
 }
@@ -91,14 +104,18 @@ function updateVisuals(type, value) {
     if (type === 'f') moveAmount = 2;
     if (type === 'h') moveAmount = 10;
 
+    // Hvis verdien er negativ (gå bakover), gjør bevegelsen negativ
     if (value < 0) moveAmount *= -1;
 
     position += moveAmount;
+    
+    // Pass på at han ikke går ut av skjermen
     if (position > 95) position = 95;
     if (position < 5) position = 5;
 
     stickman.style.left = position + "%";
 
+    // Hoppe-animasjon
     if (type === 'h') {
         stickman.classList.add('jump-anim');
         setTimeout(() => stickman.classList.remove('jump-anim'), 500);
@@ -111,13 +128,15 @@ function startSolving() {
         return;
     }
     
-    // Stopp timeren så ingenting rart skjer mens vi løser
-    clearTimeout(mergeTimer);
+    // Stopp tidsuret så vi ikke får "hengende" sammenslåinger
+    clearTimeout(timerId);
+    erTimerAktiv = false;
 
     controlsDiv.classList.add('hidden');
     solveBtn.classList.add('hidden');
     solutionArea.classList.remove('hidden');
     
+    // Tøm input-feltene
     document.getElementById('input-s').value = '';
     document.getElementById('input-f').value = '';
     document.getElementById('input-h').value = '';
@@ -125,6 +144,7 @@ function startSolving() {
 }
 
 function checkAnswer() {
+    // Hent verdiene brukeren har skrevet inn (eller 0 hvis tomt)
     let userS = parseInt(document.getElementById('input-s').value) || 0;
     let userF = parseInt(document.getElementById('input-f').value) || 0;
     let userH = parseInt(document.getElementById('input-h').value) || 0;
@@ -144,9 +164,7 @@ function checkAnswer() {
 }
 
 function calculatePoints() {
-    // Poeng basert på hvor mange ledd uttrykket har.
-    // Hvis man slår sammen (klikker fort), blir uttrykket kortere = færre poeng,
-    // men det blir ryddigere. Hvis man venter, blir det lenger = flere poeng.
+    // Poengsystem: Lengre uttrykk gir mer poeng
     return terms.length * 10;
 }
 
@@ -155,10 +173,10 @@ function resetRound() {
     totals = { s: 0, f: 0, h: 0 };
     position = 50;
     
-    // Reset timer variabler
-    clearTimeout(mergeTimer);
-    mergeTimer = null;
-    lastMoveType = null;
+    // Reset timer
+    clearTimeout(timerId);
+    erTimerAktiv = false;
+    forrigeType = null;
 
     expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
     stickman.style.left = "50%";
