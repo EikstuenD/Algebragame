@@ -15,7 +15,6 @@
         <header>
             <h1>Algebra-Strekmannen</h1>
             <div class="stats">
-                <!-- Lagt til en Reset-knapp hvis man vil starte helt på nytt -->
                 <div class="score-board">💰 Penger: <span id="money">0</span></div>
                 <button class="shop-btn" onclick="toggleShop()">🛒 Butikk</button>
             </div>
@@ -28,7 +27,7 @@
                     <h2>Butikk</h2>
                     <button class="close-shop" onclick="toggleShop()">X</button>
                 </div>
-                <p>Kjøp oppgraderinger! (Spillet lagres automatisk)</p>
+                <p>Velg en kategori:</p>
                 
                 <div class="shop-tabs">
                     <button onclick="filterShop('bg')">Bakgrunn</button>
@@ -43,7 +42,7 @@
                 <div id="shop-items" class="shop-items"></div>
                 
                 <div style="margin-top: 20px; text-align: center;">
-                    <button onclick="clearSave()" style="background: red; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Slett lagring (Nullstill spill)</button>
+                    <button onclick="clearSave()" style="background: red; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Slett lagring (Reset alt)</button>
                 </div>
             </div>
         </div>
@@ -55,11 +54,13 @@
         <div id="game-scene" class="scene default-bg">
             <div class="ground"></div>
             
-            <!-- Strekmannen (Gjort bredere i CSS) -->
+            <!-- Strekmannen Container -->
             <div id="stickman" class="stickman">
+                
+                <!-- Spor (Ligger bak kroppen) -->
                 <div id="trail-display" class="trail-container"></div>
-                <div id="pet-display" class="pet-container"></div>
 
+                <!-- Selve figuren -->
                 <div id="stickman-rotator" class="stickman-rotator">
                     <div class="head">
                         <div id="accessory" class="accessory"></div>
@@ -69,6 +70,9 @@
                     <div class="leg left"></div>
                     <div class="leg right"></div>
                 </div>
+
+                <!-- Kjæledyr (Ligger FORAN alt, flyttet ut av rotator) -->
+                <div id="pet-display" class="pet-container"></div>
             </div>
         </div>
 
