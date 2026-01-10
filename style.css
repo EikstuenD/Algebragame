@@ -6,7 +6,7 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    overflow-x: hidden; /* Hindrer scrollbar ved animasjoner */
+    overflow-x: hidden;
 }
 
 /* --- HOVEDCONTAINER --- */
@@ -22,158 +22,101 @@ body {
     z-index: 10;
 }
 
-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-}
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .stats { display: flex; align-items: center; gap: 15px; }
-.score-board {
-    font-size: 1.2em; font-weight: bold; background: #e1e1ff; padding: 10px 20px; border-radius: 20px;
-}
-.shop-btn {
-    background-color: #ff9800; color: white; font-weight: bold; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; transition: transform 0.1s;
-}
+.score-board { font-size: 1.2em; font-weight: bold; background: #e1e1ff; padding: 10px 20px; border-radius: 20px; }
+.shop-btn { background-color: #ff9800; color: white; font-weight: bold; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; transition: transform 0.1s; }
 .shop-btn:hover { background-color: #e68900; transform: scale(1.05); }
 
 /* --- MATTE DISPLAY SKINS --- */
-.math-display {
-    padding: 15px; border-radius: 8px; min-height: 30px; margin-bottom: 20px;
-    overflow-x: auto; white-space: nowrap; font-size: 1.5em; transition: all 0.3s;
-}
+.math-display { padding: 15px; border-radius: 8px; min-height: 30px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap; font-size: 1.5em; transition: all 0.3s; }
 
-/* Standard */
-.skin-default { background: #333; color: #4ef037; font-family: 'Courier New', monospace; border: none; }
-
-/* Tavle */
-.skin-chalkboard {
-    background: #2d5a27; color: #fff; font-family: 'Comic Sans MS', cursive, sans-serif;
-    border: 5px solid #8b5a2b; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-}
-/* Neon */
-.skin-neon {
-    background: #000; color: #ff00de; font-family: 'Verdana', sans-serif;
-    border: 2px solid #00eaff; box-shadow: 0 0 10px #00eaff, inset 0 0 10px #ff00de; text-shadow: 0 0 5px #ff00de;
-}
-/* Pergament */
-.skin-parchment {
-    background: #f4e4bc; color: #4a3b2a; font-family: 'Georgia', serif; font-style: italic;
-    border: 1px solid #cbb88a; background-image: radial-gradient(#dac698 2px, transparent 2px); background-size: 20px 20px;
-}
-
+.skin-default { background: #333; color: #4ef037; font-family: 'Courier New', monospace; }
+.skin-chalkboard { background: #2d5a27; color: #fff; font-family: 'Comic Sans MS', cursive; border: 5px solid #8b5a2b; }
+.skin-neon { background: #000; color: #ff00de; font-family: 'Verdana', sans-serif; border: 2px solid #00eaff; box-shadow: 0 0 10px #00eaff; text-shadow: 0 0 5px #ff00de; }
+.skin-parchment { background: #f4e4bc; color: #4a3b2a; font-family: 'Georgia', serif; font-style: italic; border: 1px solid #cbb88a; }
 
 /* --- SCENE --- */
-.scene {
-    height: 200px; border-bottom: 4px solid #333; position: relative; margin-bottom: 20px; overflow: hidden; transition: background 0.5s;
-}
+.scene { height: 200px; border-bottom: 4px solid #333; position: relative; margin-bottom: 20px; overflow: hidden; transition: background 0.5s; }
+
 /* Bakgrunner */
 .default-bg { background: linear-gradient(to bottom, #87CEEB 0%, #ffffff 100%); }
 .desert-bg { background: linear-gradient(to bottom, #FFD700 0%, #FF8C00 100%); }
 .forest-bg { background: linear-gradient(to bottom, #006400 60%, #8FBC8F 100%); }
 .night-bg { background: linear-gradient(to bottom, #000033 0%, #483D8B 100%); }
-/* Disco Bakgrunn (Victory) */
 .disco-bg { animation: disco 1s infinite; }
-@keyframes disco {
-    0% { background: red; } 33% { background: blue; } 66% { background: green; } 100% { background: red; }
-}
+@keyframes disco { 0% { background: red; } 33% { background: blue; } 66% { background: green; } 100% { background: purple; } }
 
-.ground { width: 100%; height: 10px; position: absolute; bottom: 0; }
+.ground { width: 100%; height: 10px; position: absolute; bottom: 0; z-index: 1; }
 .desert-bg .ground { background: #d2b48c; height: 20px; }
 .night-bg .ground { background: #111; }
 
-
 /* --- STREKMANN --- */
-.stickman {
-    position: absolute; bottom: 0; left: 50%; width: 60px; height: 100px;
-    transition: left 0.5s ease; z-index: 10; transform: translateX(-50%);
-}
-.stickman-rotator {
-    width: 100%; height: 100%; position: relative; transform-origin: center 60%;
-}
-.stickman .head {
-    width: 30px; height: 30px; border: 3px solid black; border-radius: 50%;
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: white; z-index: 2;
-}
-.stickman .body {
-    width: 4px; height: 40px; background: black; position: absolute; top: 33px; left: 50%; transform: translateX(-50%);
-}
-.stickman .arms {
-    width: 40px; height: 4px; background: black; position: absolute; top: 45px; left: 50%; transform: translateX(-50%);
-}
-.stickman .leg {
-    width: 4px; height: 35px; background: black; position: absolute; top: 68px; left: 50%; transform-origin: top center;
-}
+.stickman { position: absolute; bottom: 0; left: 50%; width: 60px; height: 100px; transition: left 0.5s ease; z-index: 10; transform: translateX(-50%); }
+.stickman-rotator { width: 100%; height: 100%; position: relative; transform-origin: center 60%; }
+
+.stickman .head { width: 30px; height: 30px; border: 3px solid black; border-radius: 50%; position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: white; z-index: 2; }
+.stickman .body { width: 4px; height: 40px; background: black; position: absolute; top: 33px; left: 50%; transform: translateX(-50%); }
+.stickman .arms { width: 40px; height: 4px; background: black; position: absolute; top: 45px; left: 50%; transform: translateX(-50%); }
+.stickman .leg { width: 4px; height: 35px; background: black; position: absolute; top: 68px; left: 50%; transform-origin: top center; }
 .stickman .leg.left { transform: translateX(-50%) rotate(25deg); }
 .stickman .leg.right { transform: translateX(-50%) rotate(-25deg); }
 
-/* --- KLÆR --- */
-.stickman-rotator.shirt-red .body { background: red; width: 14px; border-radius: 5px; }
-.stickman-rotator.shirt-red .arms { background: red; height: 8px; top: 43px; }
-.stickman-rotator.shirt-blue .body { background: blue; width: 14px; border-radius: 5px; }
-.stickman-rotator.shirt-blue .arms { background: blue; height: 8px; top: 43px; }
-.stickman-rotator.pants-jeans .leg { background: darkblue; width: 7px; }
-.stickman-rotator.pants-green .leg { background: darkgreen; width: 7px; }
+/* --- KLÆR (Tvinger fargeendring) --- */
+.stickman-rotator.shirt-red .body { background: red !important; width: 14px; border-radius: 5px; }
+.stickman-rotator.shirt-red .arms { background: red !important; height: 8px; top: 43px; }
 
-/* --- HODEPLAGG (CSS Kunst) --- */
+.stickman-rotator.shirt-blue .body { background: blue !important; width: 14px; border-radius: 5px; }
+.stickman-rotator.shirt-blue .arms { background: blue !important; height: 8px; top: 43px; }
+
+.stickman-rotator.pants-jeans .leg { background: darkblue !important; width: 7px; }
+.stickman-rotator.pants-green .leg { background: darkgreen !important; width: 7px; }
+
+/* --- HODEPLAGG --- */
 .accessory { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
 .hat-cowboy::after { content: ''; position: absolute; top: -15px; left: -10px; width: 50px; height: 10px; background: #8B4513; border-radius: 5px; }
 .hat-cowboy::before { content: ''; position: absolute; top: -30px; left: 0px; width: 30px; height: 20px; background: #8B4513; border-radius: 5px 5px 0 0; }
+
 .hat-caps::before { content: ''; position: absolute; top: -5px; left: 0; width: 30px; height: 15px; background: red; border-radius: 30px 30px 0 0; }
 .hat-caps::after { content: ''; position: absolute; top: 5px; left: 20px; width: 20px; height: 4px; background: red; }
+
 .hat-glasses::before { content: ''; position: absolute; top: 10px; left: 2px; width: 10px; height: 6px; border: 2px solid black; border-radius: 3px; background: rgba(0,255,255,0.3); }
 .hat-glasses::after { content: ''; position: absolute; top: 10px; left: 18px; width: 10px; height: 6px; border: 2px solid black; border-radius: 3px; background: rgba(0,255,255,0.3); }
 
+/* --- KJÆLEDYR (Flyttet til høyre) --- */
+.pet-container { position: absolute; bottom: 0; left: 45px; width: 20px; height: 20px; transition: all 0.5s ease; z-index: 5; }
 
-/* --- KJÆLEDYR (CSS Kunst) --- */
-.pet-container {
-    position: absolute; bottom: 0; left: -35px; width: 20px; height: 20px; transition: all 0.5s ease;
-}
-/* Hund */
 .pet-dog { width: 20px; height: 15px; background: #8B4513; border-radius: 5px; position: relative; }
 .pet-dog::before { content: ''; position: absolute; top: -10px; left: 0; width: 12px; height: 12px; background: #8B4513; border-radius: 50%; }
 .pet-dog::after { content: ''; position: absolute; top: 0; right: -5px; width: 5px; height: 15px; background: #8B4513; transform: rotate(45deg); }
-/* Robot */
+
 .pet-robot { width: 15px; height: 18px; background: silver; border: 1px solid black; position: relative; top: -15px; animation: float 1s infinite alternate; }
 .pet-robot::after { content: ''; position: absolute; top: 4px; left: 2px; width: 10px; height: 4px; background: cyan; box-shadow: 0 0 5px cyan; }
-/* Matte-Blob */
-.pet-blob { width: 20px; height: 20px; background: limegreen; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; color: white; font-weight: bold; animation: squish 0.8s infinite alternate; }
-.pet-blob::after { content: 'π'; }
 @keyframes float { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+
+.pet-blob { width: 20px; height: 20px; background: limegreen; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 12px; animation: squish 0.8s infinite alternate; }
+.pet-blob::after { content: 'π'; }
 @keyframes squish { from { transform: scaleY(1); } to { transform: scaleY(0.8) scaleX(1.1); } }
 
-
 /* --- SPOR / TRAILS --- */
-.trail-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.trail-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
 
-/* Ild-spor */
-.trail-fire::after {
-    content: ''; position: absolute; bottom: 0; left: 20px; width: 20px; height: 40px;
-    background: radial-gradient(circle, yellow, red, transparent); opacity: 0.7; filter: blur(5px);
-    transform: skewX(20deg); animation: flicker 0.2s infinite alternate;
-}
+/* Ild - Blafrer alltid litt */
+.trail-fire::after { content: ''; position: absolute; bottom: 0; left: 20px; width: 20px; height: 40px; background: radial-gradient(circle, yellow, red, transparent); opacity: 0.7; filter: blur(5px); transform: skewX(20deg); animation: flicker 0.2s infinite alternate; }
 @keyframes flicker { from { opacity: 0.6; height: 40px; } to { opacity: 0.9; height: 50px; } }
 
-/* Regnbue-spor */
-.trail-rainbow::after {
-    content: ''; position: absolute; bottom: 10px; left: 10px; width: 40px; height: 80px;
-    background: linear-gradient(to right, red, orange, yellow, green, blue, violet);
-    opacity: 0.4; filter: blur(8px); transform: skewX(30deg); z-index: -1;
-}
+/* Regnbue */
+.trail-rainbow::after { content: ''; position: absolute; bottom: 10px; left: 10px; width: 40px; height: 80px; background: linear-gradient(to right, red, orange, yellow, green, blue, violet); opacity: 0.5; filter: blur(8px); transform: skewX(30deg); animation: pulseRainbow 2s infinite; }
+@keyframes pulseRainbow { 0% { opacity: 0.3; } 50% { opacity: 0.6; } 100% { opacity: 0.3; } }
 
-/* Tall-dryss (Forenklet med CSS content) */
-.trail-math::before {
-    content: '+ - ='; position: absolute; bottom: 20px; left: -20px; color: black; font-weight: bold; font-size: 14px;
-    animation: particles 1s infinite linear; opacity: 0;
-}
+/* Tall-dryss */
+.trail-math::before { content: '+ - ='; position: absolute; bottom: 20px; left: -20px; color: black; font-weight: bold; font-size: 14px; animation: particles 1s infinite linear; opacity: 0; }
 @keyframes particles { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(-30px) rotate(45deg); opacity: 0; } }
 
-
 /* --- BUTIKK UI --- */
-#shop-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 100; border-radius: 15px;
-}
-.shop-window {
-    background: white; padding: 20px; width: 85%; max-height: 90%; overflow-y: auto; border-radius: 10px; text-align: left;
-}
+#shop-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 100; border-radius: 15px; }
+.shop-window { background: white; padding: 20px; width: 85%; max-height: 90%; overflow-y: auto; border-radius: 10px; text-align: left; }
 .shop-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin: 20px 0; }
 .shop-item { border: 1px solid #ddd; padding: 10px; border-radius: 8px; text-align: center; background: #f9f9f9; }
 .shop-item h4 { margin: 5px 0; font-size: 0.9em; }
@@ -185,15 +128,11 @@ header {
 .shop-tabs button:hover { background: #ddd; }
 
 /* --- SEIERS-EFFEKTER --- */
-#victory-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
-.confetti {
-    position: absolute; width: 10px; height: 10px; background: red;
-    animation: fall linear forwards;
-}
+#victory-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+.confetti { position: absolute; width: 10px; height: 10px; background: red; animation: fall linear forwards; }
 @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
-
-/* --- STANDARD GUI --- */
+/* Standard GUI */
 .controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
 .control-group { background: #f9f9f9; padding: 8px; border-radius: 8px; border: 1px solid #ddd; min-width: 120px; }
 h3 { margin: 5px 0; font-size: 1em; }
