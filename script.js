@@ -31,25 +31,25 @@ const shopData = [
     { id: 'pants_jeans', type: 'body', name: 'Dongeribukse', price: 120, cssClass: 'pants-jeans' },
     { id: 'full_outfit', type: 'body', name: 'Grønn drakt', price: 300, cssClass: 'shirt-blue pants-green' },
 
-    // KJÆLEDYR (NY)
+    // KJÆLEDYR
     { id: 'pet_none', type: 'pet', name: 'Ingen dyr', price: 0, cssClass: '' },
     { id: 'pet_dog', type: 'pet', name: 'Hund', price: 250, cssClass: 'pet-dog' },
     { id: 'pet_robot', type: 'pet', name: 'Robot', price: 400, cssClass: 'pet-robot' },
     { id: 'pet_blob', type: 'pet', name: 'Matte-Blob', price: 350, cssClass: 'pet-blob' },
 
-    // SPOR/TRAILS (NY)
+    // SPOR/TRAILS
     { id: 'trail_none', type: 'trail', name: 'Ingen spor', price: 0, cssClass: '' },
     { id: 'trail_fire', type: 'trail', name: 'Ild', price: 300, cssClass: 'trail-fire' },
     { id: 'trail_rainbow', type: 'trail', name: 'Regnbue', price: 350, cssClass: 'trail-rainbow' },
     { id: 'trail_math', type: 'trail', name: 'Tall-dryss', price: 200, cssClass: 'trail-math' },
 
-    // MATTE SKINS (NY)
+    // MATTE SKINS
     { id: 'skin_default', type: 'skin', name: 'Standard', price: 0, cssClass: 'skin-default' },
     { id: 'skin_chalkboard', type: 'skin', name: 'Tavle', price: 150, cssClass: 'skin-chalkboard' },
     { id: 'skin_neon', type: 'skin', name: 'Neon', price: 250, cssClass: 'skin-neon' },
     { id: 'skin_parchment', type: 'skin', name: 'Pergament', price: 150, cssClass: 'skin-parchment' },
 
-    // SEIER/VICTORY (NY)
+    // SEIER/VICTORY
     { id: 'vic_none', type: 'victory', name: 'Ingen feiring', price: 0, cssClass: '' },
     { id: 'vic_confetti', type: 'victory', name: 'Konfetti', price: 200, cssClass: 'confetti' },
     { id: 'vic_disco', type: 'victory', name: 'Disco Lys', price: 300, cssClass: 'disco-bg' }
