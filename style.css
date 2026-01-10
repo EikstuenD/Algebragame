@@ -10,8 +10,8 @@ body {
 
 .game-container {
     background: white;
-    width: 800px;
-    max-width: 95%;
+    width: 850px; /* Litt bredere for å få plass til knappene */
+    max-width: 98%;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -60,10 +60,11 @@ header {
 .stickman {
     position: absolute;
     bottom: 0;
-    left: 50%; /* Starter i midten */
+    left: 50%;
     width: 40px;
     height: 100px;
-    transition: left 0.5s ease, transform 0.3s ease;
+    transition: left 0.5s ease; /* Fjernet transform her for ikke å krasje med animasjonene */
+    transform-origin: center center; /* Viktig for rullingen */
 }
 
 .stickman .head {
@@ -98,8 +99,7 @@ header {
     bottom: 0;
     left: 0;
 }
-/* Enkel måte å lage ben på med pseudo-elementer eller borders. 
-   Her bruker vi en forenkling for ren CSS tegning */
+
 .stickman::before, .stickman::after {
     content: '';
     position: absolute;
@@ -112,7 +112,9 @@ header {
 .stickman::before { left: 50%; transform: rotate(20deg); }
 .stickman::after { left: 50%; transform: rotate(-20deg); }
 
-/* Animasjonsklasser */
+/* --- ANIMASJONER --- */
+
+/* Hopp */
 .jump-anim { animation: jump 0.5s ease; }
 @keyframes jump {
     0% { bottom: 0; }
@@ -120,10 +122,18 @@ header {
     100% { bottom: 0; }
 }
 
+/* Rulle (NY) */
+.roll-anim { animation: roll 0.6s linear; }
+@keyframes roll {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
 /* Kontroller */
 .controls {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
@@ -131,33 +141,39 @@ header {
 
 .control-group {
     background: #f9f9f9;
-    padding: 10px;
+    padding: 8px;
     border-radius: 8px;
     border: 1px solid #ddd;
+    min-width: 120px;
 }
+
+h3 { margin: 5px 0; font-size: 1em; }
 
 button {
     cursor: pointer;
-    padding: 8px 15px;
-    margin: 5px;
+    padding: 6px 10px;
+    margin: 2px;
     border: none;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 0.9em;
     transition: transform 0.1s;
+    width: 100%;
 }
 
 button:active { transform: scale(0.95); }
 
-/* Fargekoding for variabler */
+/* Fargekoding */
 .control-group:nth-child(1) button { background-color: #ffcccb; } /* s - rødlig */
 .control-group:nth-child(2) button { background-color: #ccffcc; } /* f - grønnlig */
 .control-group:nth-child(3) button { background-color: #ccccff; } /* h - blålig */
+.control-group:nth-child(4) button { background-color: #fff4cc; } /* r - gulaktig (NY) */
 
 .action-btn {
     background-color: #333;
     color: white;
     font-size: 1.1em;
     padding: 12px 24px;
+    width: auto;
 }
 
 /* Løsningsområde */
@@ -174,7 +190,8 @@ button:active { transform: scale(0.95); }
 .inputs {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
     margin: 15px 0;
 }
 
