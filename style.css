@@ -10,7 +10,7 @@ body {
 
 .game-container {
     background: white;
-    width: 850px; /* Litt bredere for å få plass til knappene */
+    width: 850px;
     max-width: 98%;
     padding: 20px;
     border-radius: 15px;
@@ -47,7 +47,7 @@ header {
     white-space: nowrap;
 }
 
-/* Scene og Strekmann */
+/* --- Scene og Strekmann --- */
 .scene {
     height: 200px;
     border-bottom: 4px solid #333;
@@ -57,16 +57,26 @@ header {
     overflow: hidden;
 }
 
+/* Den ytre boksen styrer KUN posisjon (bortover) */
 .stickman {
     position: absolute;
     bottom: 0;
     left: 50%;
     width: 40px;
     height: 100px;
-    transition: left 0.5s ease; /* Fjernet transform her for ikke å krasje med animasjonene */
-    transform-origin: center center; /* Viktig for rullingen */
+    transition: left 0.5s ease; /* Myk bevegelse bortover */
+    z-index: 10;
 }
 
+/* Den indre boksen styrer animasjon (hopping og rulling) */
+.stickman-rotator {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-origin: center center; /* Snurrer rundt magen */
+}
+
+/* Hodet */
 .stickman .head {
     width: 30px;
     height: 30px;
@@ -75,6 +85,7 @@ header {
     margin: 0 auto;
 }
 
+/* Kroppen */
 .stickman .body {
     width: 3px;
     height: 40px;
@@ -82,6 +93,7 @@ header {
     margin: 0 auto;
 }
 
+/* Armer */
 .stickman .arms {
     width: 40px;
     height: 3px;
@@ -91,16 +103,8 @@ header {
     left: 0;
 }
 
-.stickman .legs {
-    width: 40px;
-    height: 30px;
-    border-top: 3px solid transparent;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-.stickman::before, .stickman::after {
+/* Bena - Tegnes direkte på rotatoren for å følge animasjonen */
+.stickman-rotator::before, .stickman-rotator::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -109,20 +113,21 @@ header {
     background: black;
     transform-origin: top center;
 }
-.stickman::before { left: 50%; transform: rotate(20deg); }
-.stickman::after { left: 50%; transform: rotate(-20deg); }
+.stickman-rotator::before { left: 50%; transform: rotate(20deg); }
+.stickman-rotator::after { left: 50%; transform: rotate(-20deg); }
+
 
 /* --- ANIMASJONER --- */
 
 /* Hopp */
 .jump-anim { animation: jump 0.5s ease; }
 @keyframes jump {
-    0% { bottom: 0; }
-    50% { bottom: 60px; }
-    100% { bottom: 0; }
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-60px); }
+    100% { transform: translateY(0); }
 }
 
-/* Rulle (NY) */
+/* Rulle */
 .roll-anim { animation: roll 0.6s linear; }
 @keyframes roll {
     0% { transform: rotate(0deg); }
@@ -130,7 +135,7 @@ header {
 }
 
 
-/* Kontroller */
+/* --- Kontroller --- */
 .controls {
     display: flex;
     justify-content: center;
@@ -163,10 +168,10 @@ button {
 button:active { transform: scale(0.95); }
 
 /* Fargekoding */
-.control-group:nth-child(1) button { background-color: #ffcccb; } /* s - rødlig */
-.control-group:nth-child(2) button { background-color: #ccffcc; } /* f - grønnlig */
-.control-group:nth-child(3) button { background-color: #ccccff; } /* h - blålig */
-.control-group:nth-child(4) button { background-color: #fff4cc; } /* r - gulaktig (NY) */
+.control-group:nth-child(1) button { background-color: #ffcccb; } /* s */
+.control-group:nth-child(2) button { background-color: #ccffcc; } /* f */
+.control-group:nth-child(3) button { background-color: #ccccff; } /* h */
+.control-group:nth-child(4) button { background-color: #fff4cc; } /* r */
 
 .action-btn {
     background-color: #333;
@@ -176,7 +181,7 @@ button:active { transform: scale(0.95); }
     width: auto;
 }
 
-/* Løsningsområde */
+/* --- Løsningsområde --- */
 .hidden { display: none; }
 
 .solution-area {
