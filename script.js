@@ -2,7 +2,7 @@
 let terms = []; 
 let totals = { s: 0, f: 0, h: 0, r: 0 }; 
 let position = 50; 
-let money = 0; // Totale penger (poeng) man har
+let money = 0; 
 
 // Timer variabler
 let timerId = null; 
@@ -11,52 +11,50 @@ let forrigeType = null;
 let forrigeRetning = 0; 
 
 // --- BUTIKK DATA ---
-// Her definerer vi hva som finnes i butikken
 const shopData = [
-    // BAKGRUNNER
     { id: 'bg_default', type: 'bg', name: 'Standard Himmel', price: 0, cssClass: 'default-bg' },
     { id: 'bg_desert', type: 'bg', name: 'Ørken', price: 50, cssClass: 'desert-bg' },
     { id: 'bg_forest', type: 'bg', name: 'Skog', price: 100, cssClass: 'forest-bg' },
     { id: 'bg_night', type: 'bg', name: 'Natt', price: 200, cssClass: 'night-bg' },
     
-    // HODEPLAGG
     { id: 'hat_none', type: 'head', name: 'Ingen hatt', price: 0, cssClass: '' },
     { id: 'hat_cowboy', type: 'head', name: 'Cowboyhatt', price: 150, cssClass: 'hat-cowboy' },
     { id: 'hat_caps', type: 'head', name: 'Rød Caps', price: 100, cssClass: 'hat-caps' },
     { id: 'hat_glasses', type: 'head', name: 'Briller', price: 80, cssClass: 'hat-glasses' },
 
-    // KLÆR (KROPP/BEIN)
     { id: 'body_none', type: 'body', name: 'Standard strek', price: 0, cssClass: '' },
     { id: 'shirt_red', type: 'body', name: 'Rød T-skjorte', price: 120, cssClass: 'shirt-red' },
     { id: 'shirt_blue', type: 'body', name: 'Blå T-skjorte', price: 120, cssClass: 'shirt-blue' },
     { id: 'pants_jeans', type: 'body', name: 'Dongeribukse', price: 120, cssClass: 'pants-jeans' },
-    { id: 'full_outfit', type: 'body', name: 'Grønn drakt', price: 300, cssClass: 'shirt-blue pants-green' } // Kombinasjon
+    { id: 'full_outfit', type: 'body', name: 'Grønn drakt', price: 300, cssClass: 'shirt-blue pants-green' }
 ];
 
-// Lager for hva spilleren eier (starter med standard ting)
 let inventory = ['bg_default', 'hat_none', 'body_none'];
+let equipped = { bg: 'bg_default', head: 'hat_none', body: 'body_none' };
 
-// Hva har spilleren på seg nå?
-let equipped = {
-    bg: 'bg_default',
-    head: 'hat_none',
-    body: 'body_none'
-};
+// --- HENT ELEMENTER SIKKERT ---
+// Vi bruker en trygg metode for å finne elementer så ikke hele spillet krasjer hvis ett mangler
+function getEl(id) {
+    const el = document.getElementById(id);
+    if (!el) console.error("Fant ikke elementet med ID:", id);
+    return el;
+}
 
-// --- ELEMENTER ---
-const stickman = document.getElementById('stickman');
-const expressionDisplay = document.getElementById('expression');
-const controlsDiv = document.getElementById('controls');
-const solveBtn = document.getElementById('solve-btn');
-const solutionArea = document.getElementById('solution-area');
-const feedbackText = document.getElementById('feedback');
-const moneyDisplay = document.getElementById('money');
-const nextRoundBtn = document.getElementById('next-round-btn');
-const shopOverlay = document.getElementById('shop-overlay');
+const stickman = getEl('stickman');
+const expressionDisplay = getEl('expression');
+const controlsDiv = getEl('controls');
+const solveBtn = getEl('solve-btn');
+const solutionArea = getEl('solution-area');
+const feedbackText = getEl('feedback');
+const moneyDisplay = getEl('money'); // VIKTIG: I index.html må det stå id="money", ikke id="score"
+const nextRoundBtn = getEl('next-round-btn');
+const shopOverlay = getEl('shop-overlay');
 
 // --- SPILL LOGIKK ---
 
 function move(type, value) {
+    if(!stickman) return; // Sikkerhet
+
     totals[type] += value;
     let denneRetning = Math.sign(value); 
 
@@ -82,6 +80,7 @@ function move(type, value) {
 }
 
 function updateExpressionDisplay() {
+    if (!expressionDisplay) return;
     if (terms.length === 0) {
         expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
         return;
@@ -107,50 +106,70 @@ function updateVisuals(type, value) {
     if (position > 95) position = 95;
     if (position < 5) position = 5;
 
-    stickman.style.left = position + "%";
+    if(stickman) stickman.style.left = position + "%";
 
     const rotator = document.getElementById('stickman-rotator');
-    rotator.classList.remove('jump-anim', 'roll-anim');
-    void rotator.offsetWidth; 
-
-    if (type === 'h') rotator.classList.add('jump-anim');
-    if (type === 'r') rotator.classList.add('roll-anim');
+    if(rotator) {
+        rotator.classList.remove('jump-anim', 'roll-anim');
+        void rotator.offsetWidth; 
+        if (type === 'h') rotator.classList.add('jump-anim');
+        if (type === 'r') rotator.classList.add('roll-anim');
+    }
 }
 
 function startSolving() {
     if (terms.length === 0) { alert("Gå litt først!"); return; }
+    
+    // Stopp timer
     clearTimeout(timerId);
     erTimerAktiv = false;
-    controlsDiv.classList.add('hidden');
-    solveBtn.classList.add('hidden');
-    solutionArea.classList.remove('hidden');
+
+    // Bytt visning
+    if(controlsDiv) controlsDiv.classList.add('hidden');
+    if(solveBtn) solveBtn.classList.add('hidden');
+    if(solutionArea) solutionArea.classList.remove('hidden');
     
-    document.getElementById('input-s').value = '';
-    document.getElementById('input-f').value = '';
-    document.getElementById('input-h').value = '';
-    document.getElementById('input-r').value = '';
-    feedbackText.innerText = '';
+    // Tøm input
+    if(getEl('input-s')) getEl('input-s').value = '';
+    if(getEl('input-f')) getEl('input-f').value = '';
+    if(getEl('input-h')) getEl('input-h').value = '';
+    if(getEl('input-r')) getEl('input-r').value = '';
+    if(feedbackText) feedbackText.innerText = '';
 }
 
 function checkAnswer() {
-    let uS = parseInt(document.getElementById('input-s').value) || 0;
-    let uF = parseInt(document.getElementById('input-f').value) || 0;
-    let uH = parseInt(document.getElementById('input-h').value) || 0;
-    let uR = parseInt(document.getElementById('input-r').value) || 0;
+    // Vi bruker try-catch for å fange feil hvis noe kræsjer
+    try {
+        let uS = parseInt(document.getElementById('input-s').value) || 0;
+        let uF = parseInt(document.getElementById('input-f').value) || 0;
+        let uH = parseInt(document.getElementById('input-h').value) || 0;
+        let uR = parseInt(document.getElementById('input-r').value) || 0;
 
-    if (uS === totals.s && uF === totals.f && uH === totals.h && uR === totals.r) {
-        let points = terms.length * 10;
-        
-        // Bonus: Gi mer penger hvis stykket er langt!
-        money += points;
-        moneyDisplay.innerText = money;
-        
-        feedbackText.innerText = `Riktig! Du tjente ${points} kr.`;
-        feedbackText.style.color = 'green';
-        nextRoundBtn.classList.remove('hidden');
-    } else {
-        feedbackText.innerText = "Feil svar. Prøv igjen!";
-        feedbackText.style.color = 'red';
+        // Debugging: Hvis du lurer på hva fasiten er
+        console.log("Ditt svar:", uS, uF, uH, uR);
+        console.log("Fasit:", totals.s, totals.f, totals.h, totals.r);
+
+        if (uS === totals.s && uF === totals.f && uH === totals.h && uR === totals.r) {
+            let points = terms.length * 10;
+            money += points;
+            
+            if(moneyDisplay) moneyDisplay.innerText = money;
+            else alert("Fant ikke pengetelleren (moneyDisplay). Sjekk at du bruker riktig HTML.");
+
+            if(feedbackText) {
+                feedbackText.innerText = `Riktig! Du tjente ${points} kr.`;
+                feedbackText.style.color = 'green';
+            }
+            if(nextRoundBtn) nextRoundBtn.classList.remove('hidden');
+        } else {
+            if(feedbackText) {
+                feedbackText.innerText = "Feil svar. Prøv igjen!";
+                feedbackText.style.color = 'red';
+            }
+        }
+    } catch (error) {
+        alert("Noe gikk galt i sjekk-svar funksjonen: " + error.message);
+        console.error(error);
     }
 }
 
@@ -158,34 +177,41 @@ function resetRound() {
     terms = [];
     totals = { s: 0, f: 0, h: 0, r: 0 }; 
     position = 50;
+    
     clearTimeout(timerId);
     erTimerAktiv = false;
     forrigeType = null;
-    expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
-    stickman.style.left = "50%";
+    
+    if(expressionDisplay) expressionDisplay.innerText = "Gjør en bevegelse for å starte...";
+    if(stickman) stickman.style.left = "50%";
+    
     const rotator = document.getElementById('stickman-rotator');
-    rotator.classList.remove('jump-anim', 'roll-anim');
-    solutionArea.classList.add('hidden');
-    nextRoundBtn.classList.add('hidden');
-    controlsDiv.classList.remove('hidden');
-    solveBtn.classList.remove('hidden');
-    feedbackText.innerText = "";
+    if(rotator) rotator.classList.remove('jump-anim', 'roll-anim');
+    
+    if(solutionArea) solutionArea.classList.add('hidden');
+    if(nextRoundBtn) nextRoundBtn.classList.add('hidden');
+    if(controlsDiv) controlsDiv.classList.remove('hidden');
+    if(solveBtn) solveBtn.classList.remove('hidden');
+    if(feedbackText) feedbackText.innerText = "";
 }
 
 // --- BUTIKK FUNKSJONER ---
 
 function toggleShop() {
-    shopOverlay.classList.toggle('hidden');
-    if (!shopOverlay.classList.contains('hidden')) {
-        filterShop('bg'); // Vis bakgrunner som standard når butikken åpnes
+    if(shopOverlay) {
+        shopOverlay.classList.toggle('hidden');
+        if (!shopOverlay.classList.contains('hidden')) {
+            filterShop('bg'); 
+        }
     }
 }
 
 function filterShop(category) {
     const container = document.getElementById('shop-items');
-    container.innerHTML = ""; // Tøm butikken
+    if(!container) return;
+    
+    container.innerHTML = ""; 
 
-    // Finn varer som matcher kategorien
     const itemsToShow = shopData.filter(item => item.type === category);
 
     itemsToShow.forEach(item => {
@@ -202,7 +228,6 @@ function filterShop(category) {
         } else if (isOwned) {
             buttonHtml = `<button class="buy-btn equip" onclick="equipItem('${item.id}')">Bruk</button>`;
         } else {
-            // Sjekk om vi har råd
             const canAfford = money >= item.price;
             const disabledAttr = canAfford ? "" : "disabled";
             buttonHtml = `<button class="buy-btn" onclick="buyItem('${item.id}')" ${disabledAttr}>Kjøp (${item.price} kr)</button>`;
@@ -221,10 +246,10 @@ function buyItem(itemId) {
     const item = shopData.find(i => i.id === itemId);
     if (money >= item.price) {
         money -= item.price;
-        moneyDisplay.innerText = money;
+        if(moneyDisplay) moneyDisplay.innerText = money;
         inventory.push(itemId);
-        equipItem(itemId); // Ta på tingen automatisk når du kjøper
-        filterShop(item.type); // Oppdater butikken
+        equipItem(itemId); 
+        filterShop(item.type); 
     } else {
         alert("Du har ikke nok penger!");
     }
@@ -232,50 +257,40 @@ function buyItem(itemId) {
 
 function equipItem(itemId) {
     const item = shopData.find(i => i.id === itemId);
-    
-    // Oppdater variabelen
     equipped[item.type] = itemId;
-
-    // Oppdater utseendet på spillet
     applyAppearance();
-    
-    // Oppdater butikk-knappene hvis butikken er åpen
-    if (!shopOverlay.classList.contains('hidden')) {
+    if (shopOverlay && !shopOverlay.classList.contains('hidden')) {
         filterShop(item.type);
     }
 }
 
 function applyAppearance() {
-    // 1. Sett bakgrunn
     const scene = document.getElementById('game-scene');
-    // Fjern alle gamle bakgrunns-klasser
-    scene.className = 'scene'; 
-    // Legg til den nye (finn klassenavnet fra inventory)
-    const bgItem = shopData.find(i => i.id === equipped.bg);
-    if (bgItem && bgItem.cssClass) scene.classList.add(bgItem.cssClass);
-    else scene.classList.add('default-bg');
-
-    // 2. Sett klær (på rotator)
-    const rotator = document.getElementById('stickman-rotator');
-    // Fjern animasjonsklasser midlertidig for å ikke miste dem, men fjern gamle klesklasser
-    // Det enkleste er å resette className og legge tilbake animasjonene hvis de kjører (men det gjør de sjelden i butikken)
-    rotator.className = 'stickman-rotator'; 
-    
-    const bodyItem = shopData.find(i => i.id === equipped.body);
-    if (bodyItem && bodyItem.cssClass) {
-        // En ting kan ha flere klasser (f.eks "shirt-blue pants-green"), split dem
-        const classes = bodyItem.cssClass.split(' ');
-        classes.forEach(c => rotator.classList.add(c));
+    if(scene) {
+        scene.className = 'scene'; 
+        const bgItem = shopData.find(i => i.id === equipped.bg);
+        if (bgItem && bgItem.cssClass) scene.classList.add(bgItem.cssClass);
+        else scene.classList.add('default-bg');
     }
 
-    // 3. Sett hatt (i accessory div)
+    const rotator = document.getElementById('stickman-rotator');
+    if(rotator) {
+        rotator.className = 'stickman-rotator'; 
+        const bodyItem = shopData.find(i => i.id === equipped.body);
+        if (bodyItem && bodyItem.cssClass) {
+            const classes = bodyItem.cssClass.split(' ');
+            classes.forEach(c => rotator.classList.add(c));
+        }
+    }
+
     const accessoryDiv = document.getElementById('accessory');
-    accessoryDiv.className = 'accessory'; // Reset
-    
-    const headItem = shopData.find(i => i.id === equipped.head);
-    if (headItem && headItem.cssClass) accessoryDiv.classList.add(headItem.cssClass);
+    if(accessoryDiv) {
+        accessoryDiv.className = 'accessory'; 
+        const headItem = shopData.find(i => i.id === equipped.head);
+        if (headItem && headItem.cssClass) accessoryDiv.classList.add(headItem.cssClass);
+    }
 }
 
 // Initialiser spillet
-moneyDisplay.innerText = money;
+if(moneyDisplay) moneyDisplay.innerText = money;
 applyAppearance();
