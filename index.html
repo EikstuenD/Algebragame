@@ -8,13 +8,14 @@
 </head>
 <body>
 
-    <!-- Container for seiers-effekter (Konfetti) -->
+    <!-- Container for seiers-effekter -->
     <div id="victory-container"></div>
 
     <div class="game-container">
         <header>
             <h1>Algebra-Strekmannen</h1>
             <div class="stats">
+                <!-- Lagt til en Reset-knapp hvis man vil starte helt på nytt -->
                 <div class="score-board">💰 Penger: <span id="money">0</span></div>
                 <button class="shop-btn" onclick="toggleShop()">🛒 Butikk</button>
             </div>
@@ -23,46 +24,42 @@
         <!-- BUTIKK VINDU -->
         <div id="shop-overlay" class="hidden">
             <div class="shop-window">
-                <h2>Butikk</h2>
-                <p>Kjøp oppgraderinger for poengene dine!</p>
+                <div class="shop-header">
+                    <h2>Butikk</h2>
+                    <button class="close-shop" onclick="toggleShop()">X</button>
+                </div>
+                <p>Kjøp oppgraderinger! (Spillet lagres automatisk)</p>
                 
-                <!-- Meny-faner -->
                 <div class="shop-tabs">
                     <button onclick="filterShop('bg')">Bakgrunn</button>
                     <button onclick="filterShop('head')">Hode</button>
                     <button onclick="filterShop('body')">Klær</button>
                     <button onclick="filterShop('pet')">Kjæledyr</button>
                     <button onclick="filterShop('trail')">Spor</button>
-                    <button onclick="filterShop('skin')">Matte-Design</button>
+                    <button onclick="filterShop('skin')">Design</button>
                     <button onclick="filterShop('victory')">Feiring</button>
                 </div>
 
-                <div id="shop-items" class="shop-items">
-                    <!-- Varer settes inn via JS -->
+                <div id="shop-items" class="shop-items"></div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button onclick="clearSave()" style="background: red; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Slett lagring (Nullstill spill)</button>
                 </div>
-                <button class="close-shop" onclick="toggleShop()">Lukk butikk</button>
             </div>
         </div>
 
-        <!-- Matte-display -->
         <div id="math-container" class="math-display skin-default">
             <span id="expression">Gjør en bevegelse for å starte...</span>
         </div>
 
-        <!-- Spillområde -->
         <div id="game-scene" class="scene default-bg">
             <div class="ground"></div>
             
-            <!-- Strekmann Container -->
+            <!-- Strekmannen (Gjort bredere i CSS) -->
             <div id="stickman" class="stickman">
-                
-                <!-- Spor/Trail (Bak figuren) -->
                 <div id="trail-display" class="trail-container"></div>
-
-                <!-- Kjæledyr (Ved siden av figuren) -->
                 <div id="pet-display" class="pet-container"></div>
 
-                <!-- Figuren som roterer -->
                 <div id="stickman-rotator" class="stickman-rotator">
                     <div class="head">
                         <div id="accessory" class="accessory"></div>
@@ -75,7 +72,6 @@
             </div>
         </div>
 
-        <!-- Kontrollpanel -->
         <div id="controls" class="controls">
             <div class="control-group">
                 <h3>Skritt (s)</h3>
@@ -101,7 +97,6 @@
 
         <button id="solve-btn" class="action-btn" onclick="startSolving()">Jeg er ferdig - Trekk sammen!</button>
 
-        <!-- Svar-seksjon -->
         <div id="solution-area" class="solution-area hidden">
             <h2>Trekk sammen uttrykket:</h2>
             <div class="inputs">
